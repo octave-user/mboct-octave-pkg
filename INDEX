@@ -1,0 +1,57 @@
+## Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with this program; If not, see <http://www.gnu.org/licenses/>.
+
+toolbox >> MBDyn/Octave utility package
+
+Processes
+       shell
+       spawn
+       spawn_wait
+       run_parallel       
+       run_parallel_func
+       run_parallel_helper
+       
+Design of experiment
+       doe_param_dim_to_res_dim
+       doe_res_idx_to_param_idx
+
+Exception handling
+        error_report
+        
+Utility
+        addpath_full
+        struct_print
+        struct_sizeof
+        
+Plotting
+        figure_export_ascii
+        figure_hide
+        figure_list
+        figure_set_visible
+        figure_show
+        pdf_create
+        pdf_merge
+        printable_title
+        
+Interpolation
+        griddata_prepared
+
+Command-line parsing
+        overwrite_struct
+        overwrite_struct_add_arg
+        
+Testing
+        exec_demo
+        exec_test
