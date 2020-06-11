@@ -1,5 +1,5 @@
-# mboct-numerical-pkg<sup>&copy;</sup>
-**mboct-numerical-pkg** belongs to a suite of packages which can be used for pre- and postprocessing of MBDyn models (https://www.mbdyn.org) with GNU-Octave (http://www.gnu.org/software/octave/). It contains general purpose utility functions used in all mboct-*-pkg packages.
+# mboct-octave-pkg<sup>&copy;</sup>
+**mboct-octave-pkg** belongs to a suite of packages which can be used for pre- and postprocessing of MBDyn models (https://www.mbdyn.org) with GNU-Octave (http://www.gnu.org/software/octave/). It contains general purpose utility functions used in all mboct-*-pkg packages.
 
 Copyright<sup>&copy;</sup> 2019-2020
 
