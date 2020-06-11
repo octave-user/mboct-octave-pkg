@@ -34,7 +34,8 @@
 DEFUN_DLD(spawn, args, nargout,
           "-*- texinfo -*-\n"
           "@deftypefn  {} @var{pid} = spawn(@var{command}, @var{args})\n" 
-          "Start the program @var{command} on Unix or Windows systems and return it's @var{pid}\n\n"
+          "Start the program identified by @var{command} on Unix or Windows systems and return it's @var{pid}\n\n"
+	  "@var{command} @dots{} Character string name of the program.\n\n"
           "@var{args} @dots{} Arguments passed to the program as a cell array of char strings.\n\n"          
           "@example\n"
           "@var{pid} = spawn(\"ls\", @{\"-lhF\",\".\"@});\n"
