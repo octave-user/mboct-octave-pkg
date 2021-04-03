@@ -61,7 +61,7 @@ function rc = pdf_create(nfig = "all", output_filename = "figure", width = 1024/
 
         unlink(nameo{i});
 
-        print(nfig(i), "-dpdf", "-color", "-portrait", sprintf("-S%d,%d", width, height), nameo{i});
+        print(nfig(i), "-dpdf", "-color", "-landscape", "-fillpage", nameo{i});
 
         [info, err] = stat(nameo{i});
 
