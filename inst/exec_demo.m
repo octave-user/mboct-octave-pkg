@@ -84,7 +84,7 @@ function status = exec_demo(filename_in, index, first_line, type)
         
         ++line_no;
         
-        if (strncmp(line, sprintf("%%!%s", type), 6))
+        if (strncmp(line, sprintf("%%!%s", type), 6) || strncmp(line, sprintf("%%!x%s", type), 7))
           if (++f_demo_found == index)
             break;
           endif
