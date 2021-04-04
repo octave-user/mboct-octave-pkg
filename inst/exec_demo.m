@@ -103,7 +103,7 @@ function status = exec_demo(filename_in, index, first_line, type)
           
           ++line_no;
           
-          if (strncmp(line, "%!demo", 6) || strncmp(line, "%!test", 6))
+          if (strncmp(line, "%!demo", 6) || strncmp(line, "%!test", 6) || strncmp(line, "%!xtest", 7))
             break;
           endif
           
