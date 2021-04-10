@@ -55,7 +55,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "octave_exec"))
-    options.octave_exec = "octave-cli";
+    options.octave_exec = fullfile(OCTAVE_HOME, "bin", "octave-cli");
   endif
   
   if (options.number_of_parameters < options.number_of_processors)
