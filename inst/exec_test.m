@@ -20,7 +20,7 @@
 ## Execute a test from a function file within the global context and leave all variables in place.
 ## @end deftypefn
 
-function exec_test(filename, index, first_line)
+function status = exec_test(filename, index, first_line)
   if (nargin < 1 || nargin > 3)
     print_usage();
   endif
@@ -32,8 +32,10 @@ function exec_test(filename, index, first_line)
   if (nargin < 3)
     first_line = 1;
   endif
+
+  status = exec_demo(filename, index, first_line, 'test');
   
-  if (0 == exec_demo(filename, index, first_line, 'test'))
+  if (0 == status)
     fprintf(stderr, "test %d passed\n", index);
   else
     fprintf(stderr, "test %d failed\n", index);
