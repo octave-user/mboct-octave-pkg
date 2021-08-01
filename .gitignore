@@ -1,6 +1,7 @@
 # octave-forge Makefile
 fntests.log
 target
+fntests.log
 
 # Emacs
 *~
