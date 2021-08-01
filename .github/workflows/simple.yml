@@ -32,7 +32,7 @@ jobs:
         run: make -C $GITHUB_WORKSPACE dist
 
       - name: Install the package
-        run: make -C $GITHUB_WORKSPACE install_local
+        run: make -C $GITHUB_WORKSPACE CXXFLAGS="-Ofast -Wall -march=native" install_local
 
       - name: Run all tests
         run: |
