@@ -241,7 +241,7 @@ endfunction
 %!    fclose(fd);
 %!  endif
 %!  if (numel(fname))
-%!    unlink(fname);
+%!    [~] = unlink(fname);
 %!  endif
 %! end_unwind_protect
 

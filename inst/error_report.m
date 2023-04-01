@@ -62,7 +62,7 @@ endfunction
 %!   unwind_protect_cleanup
 %!     if (fd ~= -1)
 %!       fclose(fd);
-%!       unlink(fname);
+%!       [~] = unlink(fname);
 %!     endif
 %!  end_unwind_protect
 %! end_try_catch

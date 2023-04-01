@@ -156,7 +156,7 @@ endfunction
 %!  endfor
 %!  if (fd ~= -1)
 %!    fclose(fd);
-%!    unlink(output_file);
+%!    [~] = unlink(output_file);
 %!  endif
 %! end_unwind_protect
 
@@ -182,7 +182,7 @@ endfunction
 %!    close(hfig(i));
 %!  endfor
 %!  if (fd ~= -1)
-%!    unlink(output_file);
+%!    [~] = unlink(output_file);
 %!  endif
 %! end_unwind_protect
 
@@ -214,6 +214,6 @@ endfunction
 %!  endfor
 %!  if (fd ~= -1)
 %!    fclose(fd);
-%!    unlink(output_file);
+%!    [~] = unlink(output_file);
 %!  endif
 %! end_unwind_protect

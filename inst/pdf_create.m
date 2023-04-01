@@ -59,7 +59,7 @@ function rc = pdf_create(nfig = "all", output_filename = "figure", width = 1024/
           fprintf(stderr, "file \"%s\" is created ...\n", nameo{i});
         endif
 
-        unlink(nameo{i});
+        [~] = unlink(nameo{i});
 
         print(nfig(i), "-dpdf", "-color", "-landscape", "-fillpage", nameo{i});
 
@@ -86,7 +86,7 @@ function rc = pdf_create(nfig = "all", output_filename = "figure", width = 1024/
     if (delete_tmp_files)
       for i=1:numel(nameo)
         if (ischar(nameo{i}))
-          unlink(nameo{i});
+          [~] = unlink(nameo{i});
         endif
       endfor
     endif

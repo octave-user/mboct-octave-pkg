@@ -135,7 +135,7 @@ function status = exec_demo(filename_in, index, first_line, type)
       error_report(lasterror());
     end_try_catch
   unwind_protect_cleanup
-    unlink(temp_file_name);
+    [~] = unlink(temp_file_name);
   end_unwind_protect
 endfunction
 

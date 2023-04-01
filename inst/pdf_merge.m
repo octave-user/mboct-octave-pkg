@@ -98,7 +98,7 @@ function status = run_command(files, output_filename, verbose)
         error("command line too long for this system");
       endif
 
-      unlink(output_filename_tmp);
+      [~] = unlink(output_filename_tmp);
 
       if (verbose)
         fprintf(stderr, "\"%s%s\" stage %d: processing files [%d:%d] of %d\n", out_name, out_ext, stage, k, N, length(files));
@@ -139,7 +139,7 @@ function status = run_command(files, output_filename, verbose)
     ++stage;
   until (length(files_next_stage) == 1)
 
-  unlink(output_filename);
+  [~] = unlink(output_filename);
   
   [err, msg] = rename(files_next_stage{1}, output_filename);
 
