@@ -142,7 +142,7 @@ endfunction
 %!    subplot(2, 1, j);
 %!    hold("on");
 %!    for k=1:2
-%!      plot(1:10,rand(1, 10), sprintf("-;rand(%d, %d);%d", i, j, k));
+%!      plot(1:10,rand(1, 10), sprintf("-;rand(%d, %d);", i, j));
 %!    endfor
 %!    xlabel("x");
 %!    ylabel("y");
@@ -169,7 +169,7 @@ endfunction
 %!  hfig(end + 1) = figure("visible", "off");
 %!  for j=1:2
 %!    subplot(2, 1, j);
-%!    plot(1:10,rand(1, 10), sprintf("-;rand(%d);%d", i, i));
+%!    plot(1:10,rand(1, 10), sprintf("-;rand(%d);", i));
 %!    xlabel("x");
 %!    ylabel("y");
 %!    title(sprintf("test figure %d axes %d", i, j));
