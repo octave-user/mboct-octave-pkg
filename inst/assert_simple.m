@@ -14,25 +14,25 @@
 ## along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 ## -*- texinfo -*-
-## @deftypefn  {} {} simple_assert (@var{cond})
-## @deftypefnx {} {} simple_assert (@var{cond}, @var{errmsg})
-## @deftypefnx {} {} simple_assert (@var{cond}, @var{errmsg}, @dots{})
-## @deftypefnx {} {} simple_assert (@var{cond}, @var{msg_id}, @var{errmsg}, @dots{})
-## @deftypefnx {} {} simple_assert (@var{observed}, @var{expected})
-## @deftypefnx {} {} simple_assert (@var{observed}, @var{expected}, @var{tol})
+## @deftypefn  {} {} assert_simple (@var{cond})
+## @deftypefnx {} {} assert_simple (@var{cond}, @var{errmsg})
+## @deftypefnx {} {} assert_simple (@var{cond}, @var{errmsg}, @dots{})
+## @deftypefnx {} {} assert_simple (@var{cond}, @var{msg_id}, @var{errmsg}, @dots{})
+## @deftypefnx {} {} assert_simple (@var{observed}, @var{expected})
+## @deftypefnx {} {} assert_simple (@var{observed}, @var{expected}, @var{tol})
 ##
 ## Produce an error if the specified condition is not met.
 ## The reason why we cannot just call assert is, that assert might be excessively slow in some situations.
 ## For that reason, assert may break a whole testsuite just because a single assertion fails and the error message becomes too long.
 ##
-## @code{simple_assert} can be called in three different ways.
+## @code{assert_simple} can be called in three different ways.
 ##
 ## @table @code
-## @item  simple_assert (@var{cond})
-## @itemx simple_assert (@var{cond}, @var{errmsg})
-## @itemx simple_assert (@var{cond}, @var{errmsg}, @dots{})
-## @itemx simple_assert (@var{cond}, @var{msg_id}, @var{errmsg}, @dots{})
-## Called with a single argument @var{cond}, @code{simple_assert} produces an error if
+## @item  assert_simple (@var{cond})
+## @itemx assert_simple (@var{cond}, @var{errmsg})
+## @itemx assert_simple (@var{cond}, @var{errmsg}, @dots{})
+## @itemx assert_simple (@var{cond}, @var{msg_id}, @var{errmsg}, @dots{})
+## Called with a single argument @var{cond}, @code{assert_simple} produces an error if
 ## @var{cond} is false (numeric zero).
 ##
 ## Any additional arguments are passed to the @code{error} function for
