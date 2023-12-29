@@ -230,7 +230,7 @@ endfunction
 %! fd = -1;
 %! fname = "";
 %! unwind_protect
-%! [fd, fname, msg] = mkstemp("print_struct_XXXXXX", true);
+%! [fd, fname, msg] = mkstemp(fullfile(tempdir(), "print_struct_XXXXXX"), true);
 %! struct_print(param, fd);
 %! fclose(fd);
 %! fd = -1;

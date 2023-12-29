@@ -135,7 +135,7 @@ endfunction
 %! hfig = [];
 %! fd = -1;
 %! unwind_protect
-%! [fd, output_file] = mkstemp("figure_export_ascii_XXXXXX", true);
+%! [fd, output_file] = mkstemp(fullfile(tempdir(), "figure_export_ascii_XXXXXX"), true);
 %! for i=1:5
 %!  hfig(end + 1) = figure("visible", "off");
 %!  for j=1:2
@@ -164,7 +164,7 @@ endfunction
 %! hfig = [];
 %! fd = -1;
 %! unwind_protect
-%! [fd, output_file] = mkstemp("figure_export_ascii_XXXXXX", true);
+%! [fd, output_file] = mkstemp(fullfile(tempdir(), "figure_export_ascii_XXXXXX"), true);
 %! for i=1:5
 %!  hfig(end + 1) = figure("visible", "off");
 %!  for j=1:2
@@ -190,7 +190,7 @@ endfunction
 %! hfig = [];
 %! fd = -1;
 %! unwind_protect
-%! [fd, output_file] = mkstemp("figure_export_ascii_XXXXXX", true);
+%! [fd, output_file] = mkstemp(fullfile(tempdir(), "figure_export_ascii_XXXXXX"), true);
 %! x = linspace(0, 2 * pi, 10);
 %! y = [sin(x); cos(x)];
 %! for i=1:rows(y)

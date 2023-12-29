@@ -57,7 +57,7 @@ endfunction
 %! catch
 %!   fd = -1;
 %!   unwind_protect
-%!     [fd, fname] = mkstemp("error_report_XXXXXX", true);
+%!     [fd, fname] = mkstemp(fullfile(tempdir(), "error_report_XXXXXX"), true);
 %!     error_report(lasterror(), fd);
 %!   unwind_protect_cleanup
 %!     if (fd ~= -1)
