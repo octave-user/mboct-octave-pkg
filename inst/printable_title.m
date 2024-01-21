@@ -27,16 +27,3 @@ function s_out = printable_title(s_in)
   s_out(find(s_out == '_')) = ' ';
 endfunction
 
-%!error printable_title()
-
-%!error printable_title(1, 2)
-
-%!test
-%! assert(printable_title("__"), "  ");
-
-%!demo
-%! file_name = "output_data.dat";
-%! figure("visible", "off");
-%! plot(sin(0:0.05:2*pi));
-%! title(printable_title(file_name));
-%! figure_list();

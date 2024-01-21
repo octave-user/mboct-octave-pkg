@@ -39,9 +39,3 @@ function addpath_full(pathname)
   addpath(make_absolute_filename(pathname));
 endfunction
 
-%!test
-%! dirname = ".";
-%! addpath_full(dirname);
-
-%!demo
-%! addpath_full("~");

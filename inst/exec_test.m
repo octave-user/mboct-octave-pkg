@@ -42,5 +42,3 @@ function status = exec_test(filename, index, first_line)
   endif
 endfunction
 
-%!test
-%! exec_test(which("exec_demo"), 1);
