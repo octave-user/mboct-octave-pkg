@@ -33,12 +33,3 @@ function figure_show(ifig, varargin)
   figure_set_visible(ifig, "on", varargin{:});
 endfunction
 
-%!demo
-%! hfig = [];
-%! for i=1:3
-%!  hfig(end + 1) = figure("visible", "off");
-%! endfor
-%! figure_show(hfig, "gnuplot");
-%! for i=1:numel(hfig)
-%!   close(hfig(i));
-%! endfor

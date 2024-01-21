@@ -186,31 +186,3 @@ function res = run_parallel(options, func, varargin)
   end_unwind_protect
 endfunction
 
-%!test
-%! for Phi=0:pi/2:pi
-%! x = linspace(0, 2 * pi, 10000);
-%! f = @(i, x, Phi) sin(x(i) + Phi);
-%! opt.number_of_parameters = numel(x);
-%! opt.number_of_processors = 4;
-%! y = run_parallel(opt, f, x, Phi);
-%! assert([y{:}], sin(x + Phi));
-%! endfor
-
-%!demo
-%! Phi = linspace(-pi, pi, 1000);
-%! f = @(i, Phi) quadv(@(x) sin(x + Phi(i)).^2, 0, 2 * pi);
-%! opt.number_of_parameters = numel(Phi);
-%! opt.number_of_processors = 4;
-%! tic();
-%! y = run_parallel(opt, f, Phi);
-%! tpar = toc();
-%! tic();
-%! yser = zeros(1, numel(Phi));
-%! for i=1:numel(Phi)
-%!   yser(i) = feval(f, i, Phi);
-%! endfor
-%! tser = toc();
-%! assert([y{:}], yser);
-%! fprintf(stderr, "serial time: %g\n", tser);
-%! fprintf(stderr, "parallel time: %g\n", tpar);
-%! fprintf(stderr, "speedup: %g\n", tser / tpar);

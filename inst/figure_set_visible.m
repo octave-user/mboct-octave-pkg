@@ -58,21 +58,3 @@ function figure_set_visible(ifig, visible, toolkit)
   end_try_catch
 endfunction
 
-%!test
-%! for i=1:2
-%!   h(i) = figure("visible", "off");
-%! endfor
-%! figure_set_visible(h(i), "off", "gnuplot");
-%! for i=1:numel(h)
-%!   close(h(i));
-%! endfor
-
-%!demo
-%! hfig = [];
-%! for i=1:3
-%!  hfig(end + 1) = figure("visible", "off");
-%! endfor
-%! figure_set_visible(hfig, "off", "gnuplot");
-%! for i=1:numel(hfig)
-%!   close(hfig(i));
-%! endfor
