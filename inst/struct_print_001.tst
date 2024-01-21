@@ -1,4 +1,6 @@
 ## struct_print.m:01
+%!function param = load_struct(fname)
+%! source(fname);
 %!test
 %! param.x = 1;
 %! param.y = 1.5;
