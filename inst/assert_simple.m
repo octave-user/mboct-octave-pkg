@@ -1,4 +1,4 @@
-## Copyright (C) 2023(-2023) Reinhard <octave-user@a1.net>
+## Copyright (C) 2023(-2024) Reinhard <octave-user@a1.net>
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -66,49 +66,64 @@
 ## @end deftypefn
 
 function assert_simple(varargin)
-  switch (nargin)
-    case {2, 3}
-    otherwise
+  try
+    switch (nargin)
+      case {2, 3}
+      otherwise
+        real_assert(varargin{:});
+        return
+    endswitch
+
+    observed = varargin{1};
+    expected = varargin{2};
+
+    if (nargin >= 3)
+      tolerance = varargin{3};
+    else
+      tolerance = 0;
+    endif
+
+    size_observed = size(observed);
+    size_expected = size(expected);
+
+    size_test = size(size_observed) == size(size_expected) && isscalar(tolerance) && all(size_observed == size_expected);
+    class_test = strcmp(class(observed), class(expected));
+    numeric_test = isnumeric(observed) && isnumeric(expected);
+    sparse_test = issparse(observed) == issparse(expected);
+    scalar_test = ~(isscalar(observed) && isscalar(expected));
+
+    if (numeric_test)
+      finite_test = really_all(isfinite(observed) && isfinite(expected));
+    else
+      finite_test = true;
+    endif
+
+    tol_test = tolerance >= 0;
+
+    if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
       real_assert(varargin{:});
-      return
-  endswitch
+      return;
+    endif
 
-  observed = varargin{1};
-  expected = varargin{2};
+    difference = really_max(abs(observed - expected));
 
-  if (nargin >= 3)
-    tolerance = varargin{3};
-  else
-    tolerance = 0;
-  endif
+    if (difference > tolerance)
+      error("Abs err %.5g exceeds tol %.5g", difference, tolerance);
+    endif
+  catch
+    if (exist("gtest_fail", "file") == 2)
+      if (~isempty(lasterror().stack))
+        stack = lasterror().stack(end);
+      else
+        stack.file = __FILE__;
+        stack.line = __LINE__;
+      endif
 
-  size_observed = size(observed);
-  size_expected = size(expected);
+      gtest_fail(lasterror().message, stack.file, stack.line);
+    endif
 
-  size_test = size(size_observed) == size(size_expected) && isscalar(tolerance) && all(size_observed == size_expected);
-  class_test = strcmp(class(observed), class(expected));
-  numeric_test = isnumeric(observed) && isnumeric(expected);
-  sparse_test = issparse(observed) == issparse(expected);
-  scalar_test = ~(isscalar(observed) && isscalar(expected));
-
-  if (numeric_test)
-    finite_test = really_all(isfinite(observed) && isfinite(expected));
-  else
-    finite_test = true;
-  endif
-
-  tol_test = tolerance >= 0;
-
-  if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
-    real_assert(varargin{:});
-    return;
-  endif
-
-  difference = really_max(abs(observed - expected));
-
-  if (difference > tolerance)
-    error("Abs err %.5g exceeds tol %.5g", difference, tolerance);
-  endif
+    rethrow(lasterror());
+  end_try_catch
 endfunction
 
 function flag = really_all(x)
@@ -140,3 +155,6 @@ function real_assert(varargin)
   endif
 endfunction
 
+%!test
+%! x = 2;
+%! assert_simple(x == 1);

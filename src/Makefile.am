@@ -1,4 +1,4 @@
-##  Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+##  Copyright (C) 2018(-2024) Reinhard <octave-user@a1.net>
 
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -14,9 +14,19 @@
 ## along with this program; If not, see <http://www.gnu.org/licenses/>.
 
 oct_OBJ:=spawn.@OBJEXT@ shell.@OBJEXT@
+
+if USE_GTEST
+  oct_OBJ+=gtest_fail.@OBJEXT@
+endif
+
 oct_FILE:=__mboct_octave_proc__.oct
 
 bin_FILES:=$(oct_FILE)
+
+if USE_GTEST
+  bin_PROGRAMS=gtest-octave-cli
+  gtest_octave_cli_SOURCES=gtest-octave-cli.cc
+endif
 
 all-local: $(bin_FILES)
 
@@ -27,9 +37,12 @@ distclean-local:
 	rm -f oct-alt-includes.h
 
 %.@OBJEXT@: %.cc
-	$(MKOCTFILE) $(CXXFLAGS) -c $< -o $@
+	$(MKOCTFILE) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(oct_FILE): $(oct_OBJ)
 	$(MKOCTFILE) $^ $(LDFLAGS) $(LIBS) -o $@
+
+gtest-octave-cli$(EXEEXT): gtest-octave-cli.@OBJEXT@
+	$(MKOCTFILE) --link-stand-alone $^ $(LDFLAGS) $(LIBS) -o $@
 
 .PHONY: clean-local distclean-local
