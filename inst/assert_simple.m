@@ -119,7 +119,7 @@ function assert_simple(varargin)
       error("assert_simple %s failed\nAbs err %.5g exceeds tol %.5g", argin, difference, tolerance);
     endif
   catch
-    if (exist("gtest_fail", "file") == 3)
+    if (3 == exist("gtest_fail", "file") && ~isempty(which("gtest_fail")))
       gtest_fail(lasterror());
     endif
 
