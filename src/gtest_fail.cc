@@ -67,7 +67,13 @@ DEFUN_DLD (gtest_fail, args, nargout,
           rgStack.emplace_back(__FILE__, __LINE__);
      } else {
           for (octave_idx_type i = 0; i < stack.numel(); ++i) {
-               rgStack.emplace_back(file(i).string_value(), line(i).int_value(), column(i).int_value());
+               std::string fn = file(i).string_value();
+
+               if (fn.empty()) {
+                    fn = "<unknown file>";
+               }
+
+               rgStack.emplace_back(fn, line(i).int_value(), column(i).int_value());
           }
      }
 
