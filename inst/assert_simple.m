@@ -66,11 +66,19 @@
 ## @end deftypefn
 
 function assert_simple(varargin)
+  arg_names = cell(nargin, 1);
+
+  for i=1:nargin
+    arg_names{i} = inputname(i, false);
+  endfor
+
+  argin = ["(" strjoin(arg_names, ",") ")"];
+
   try
     switch (nargin)
       case {2, 3}
       otherwise
-        real_assert(varargin{:});
+        real_assert(argin, varargin);
         return
     endswitch
 
@@ -101,14 +109,14 @@ function assert_simple(varargin)
     tol_test = tolerance >= 0;
 
     if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
-      real_assert(varargin{:});
+      real_assert(argin, varargin);
       return;
     endif
 
     difference = really_max(abs(observed - expected));
 
     if (difference > tolerance)
-      error("Abs err %.5g exceeds tol %.5g", difference, tolerance);
+      error("assert_simple %s failed\nAbs err %.5g exceeds tol %.5g", argin, difference, tolerance);
     endif
   catch
     if (exist("gtest_fail", "file") == 3)
@@ -135,19 +143,21 @@ function maxx = really_max(x)
   endwhile
 endfunction
 
-function real_assert(varargin)
+function real_assert(argin, args)
   err = [];
+
   try
-    assert(varargin{:});
+    assert(args{:});
   catch
     err = lasterror();
   end_try_catch
 
   if (~isempty(err))
-    rethrow(err);
+    error("assert_simple %s failed", argin);
   endif
 endfunction
 
-%!test
-%! x = 2;
-%! assert_simple(x == 1);
+%!error assert_simple(2 == 1);
+%!error assert_simple(2, 1);
+%!error assert_simple(2, 1, eps);
+%!error assert_simple(ones(3,3), zeros(3,3), eps);
