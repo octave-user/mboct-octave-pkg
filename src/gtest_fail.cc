@@ -40,7 +40,7 @@ struct StackRecord {
 
 DEFUN_DLD (gtest_fail, args, nargout,
           "-*- texinfo -*-\n"
-           "@deftypefn {} gtest_fail(@{last_err})\n\n"
+           "@deftypefn {} gtest_fail(@var{last_err})\n\n"
            "Pass exception information to the GoogleTest library (e.g. to be used in assert_simple)\n\n"
            "@example\n"
            "gtest_fail(lasterror())\n"
