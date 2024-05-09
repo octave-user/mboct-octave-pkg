@@ -15,11 +15,28 @@
 
 #include <octave/oct.h>
 #include <gtest/gtest.h>
-#include <memory>
 #include <vector>
 
 // PKG_ADD: autoload ("gtest_fail", "__mboct_octave_proc__.oct");
 // PKG_DEL: autoload ("gtest_fail", "__mboct_octave_proc__.oct", "remove");
+
+struct StackRecord {
+     StackRecord(const std::string& filetmp = __FILE__, int linetmp = __LINE__, int columntmp = -1)
+          :file(filetmp), line(linetmp), column(columntmp), trace(file.c_str(), line, column) {
+     }
+
+     StackRecord(const StackRecord& oRecord)
+          :file(oRecord.file),
+           line(oRecord.line),
+           column(oRecord.column),
+           trace(file.c_str(), line, column) {
+     }
+
+     const std::string file;
+     const int line;
+     const int column;
+     const testing::ScopedTrace trace;
+};
 
 DEFUN_DLD (gtest_fail, args, nargout,
           "-*- texinfo -*-\n"
@@ -43,20 +60,18 @@ DEFUN_DLD (gtest_fail, args, nargout,
      const Cell line = stack.getfield("line");
      const Cell column = stack.getfield("column");
 
-     std::vector<std::unique_ptr<testing::ScopedTrace>> rgTrace;
+     std::vector<StackRecord> rgStack;
+     rgStack.reserve(std::max<octave_idx_type>(1, stack.numel()));
 
-     rgTrace.reserve(stack.numel());
-
-     for (octave_idx_type i = 0; i < stack.numel(); ++i) {
-          rgTrace.push_back(std::unique_ptr<testing::ScopedTrace>(new testing::ScopedTrace(file(i).string_value().c_str(), line(i).int_value(), column(i).int_value())));
+     if (stack.isempty()) {
+          rgStack.emplace_back(__FILE__, __LINE__);
+     } else {
+          for (octave_idx_type i = 0; i < stack.numel(); ++i) {
+               rgStack.emplace_back(file(i).string_value(), line(i).int_value(), column(i).int_value());
+          }
      }
 
-     SCOPED_TRACE("gtest_fail");
-
-     const std::string file0 = file.isempty() ? std::string(__FILE__) : file(0).string_value();
-     const int line0 = line.isempty() ? __LINE__ : line(0).int_value();
-
-     ADD_FAILURE_AT(file0.c_str(), line0) << message;
+     ADD_FAILURE_AT(rgStack.front().file.c_str(), rgStack.front().line) << message;
 
      return octave_value_list();
 }
