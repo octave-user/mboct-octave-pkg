@@ -21,6 +21,8 @@ AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE
 
+AC_ARG_VAR([PKG_CONFIG],[Program to return meta information about installed libraries])
+
 AC_CHECK_PROG(MKOCTFILE, mkoctfile, mkoctfile)
 
 if test -z "$MKOCTFILE"; then
@@ -33,13 +35,20 @@ if test -z "$OCTAVE_CONFIG"; then
   AC_MSG_ERROR([octave-config not found], 1);
 fi
 
+PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
+
 OCTINCLUDEDIR="${OCTINCLUDEDIR:-`${MKOCTFILE} -p INCFLAGS`}"
 OCTLIBDIR="${OCTLIBDIR:-`${MKOCTFILE} -p OCTLIBDIR`}"
 OCTLIBS="${OCTLIBS:-`${MKOCTFILE} -p LIBOCTAVE` `${MKOCTFILE} -p LIBOCTINTERP`}"
 OCTLDFLAGS="${OCTLDFLAGS:--L${OCTLIBDIR} -Wl,-rpath=${OCTLIBDIR} -Wl,--no-undefined}"
 CXX="${CXX:-`${MKOCTFILE} -p CXX`}"
 CXXFLAGS="${CXXFLAGS} `${MKOCTFILE} -p CXXFLAGS`"
+
+GTEST_LIBDIR="${GTEST_LIBDIR:-`${PKG_CONFIG} --libs-only-L gtest`}"
+GTEST_LDFLAGS="${GTEST_LDFLAGS:-`echo ${GTEST_LIBDIR} | sed 's/^-L/-Wl,-rpath=/'`}"
+GTEST_LIBS="${GTEST_LIBS:-`${PKG_CONFIG} --libs gtest`}"
 GTEST_LIBS="${GTEST_LIBS:--lgtest}"
+GTEST_CPPFLAGS="${GTEST_CPPFLAGS:-`${PKG_CONFIG} --cflags gtest`}"
 
 AC_PROG_CXX
 AC_LANG(C++)
