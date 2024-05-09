@@ -116,7 +116,7 @@ function assert_simple(varargin)
     difference = really_max(abs(observed - expected));
 
     if (difference > tolerance)
-      error("assert_simple %s failed\nAbs err %.5g exceeds tol %.5g", argin, difference, tolerance);
+      error("Abs err %.5g exceeds tol %.5g\nassert_simple %s failed", difference, tolerance, argin);
     endif
   catch
     if (3 == exist("gtest_fail", "file") && ~isempty(which("gtest_fail")))
@@ -153,7 +153,7 @@ function real_assert(argin, args)
   end_try_catch
 
   if (~isempty(err))
-    error("assert_simple %s failed", argin);
+    error("%s\tassert_simple %s failed", err.message, argin);
   endif
 endfunction
 
