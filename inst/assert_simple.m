@@ -111,15 +111,8 @@ function assert_simple(varargin)
       error("Abs err %.5g exceeds tol %.5g", difference, tolerance);
     endif
   catch
-    if (exist("gtest_fail", "file") == 2)
-      if (~isempty(lasterror().stack))
-        stack = lasterror().stack(end);
-      else
-        stack.file = __FILE__;
-        stack.line = __LINE__;
-      endif
-
-      gtest_fail(lasterror().message, stack.file, stack.line);
+    if (exist("gtest_fail", "file") == 3)
+      gtest_fail(lasterror());
     endif
 
     rethrow(lasterror());
