@@ -186,11 +186,12 @@ if test "$ac_cv_header_gtest_gtest_h" = "yes" ; then
    AC_MSG_RESULT([${have_gtest}])
 fi
 
-if ! test "${have_gtest}" = "yes"; then
+if test "${have_gtest}" = "yes"; then
+  AC_DEFINE(HAVE_GTEST, [1], [define if GoogleTest can be used])
+else
   CPPFLAGS="${TCPPFLAGS}"
   LDFLAGS="${TLDFLAGS}"
   LIBS="${TLIBS}"
-  AC_DEFINE(HAVE_GTEST, [1], [define if GoogleTest can be used])
 fi
 
 AM_CONDITIONAL([USE_GTEST], [test ${have_gtest} = "yes"])
