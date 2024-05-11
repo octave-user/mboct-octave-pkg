@@ -13,3 +13,5 @@
 %!assert ([NaN, NA, Inf, -Inf, 1+eps, eps], [NaN, NA, Inf, -Inf, 1, 0], eps)
 %!error <'NaN' mismatch> assert_simple (NaN, 1)
 %!error <'NaN' mismatch> assert_simple ([NaN 1], [1 NaN])
+%!test
+%! assert_handler([]);

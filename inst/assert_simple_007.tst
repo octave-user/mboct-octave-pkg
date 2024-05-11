@@ -16,3 +16,5 @@
 %!error assert_simple ([(complex (NA, 1)) (complex (2, NA))], [(complex (NA, 2)) 2])
 %!error <'Inf' mismatch> assert_simple (-Inf, Inf)
 %!error <'Inf' mismatch> assert_simple ([-Inf Inf], [Inf -Inf])
+%!test
+%! assert_handler([]);

@@ -8,3 +8,5 @@
 %! ## in mingw-w64: https://sourceforge.net/p/mingw-w64/bugs/466/
 %! assert_simple (y1, y2, 4*eps (y1));
 %! fail ("assert_simple (y1, y2 + eps*1e-70, eps (y1))");
+%!test
+%! assert_handler([]);

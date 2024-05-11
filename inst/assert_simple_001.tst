@@ -56,3 +56,5 @@
 %!error assert_simple(2, 1);
 %!error assert_simple(2, 1, eps);
 %!error assert_simple(ones(3,3), zeros(3,3), eps);
+%!test
+%! assert_handler([]);

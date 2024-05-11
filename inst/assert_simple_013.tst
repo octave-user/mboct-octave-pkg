@@ -16,3 +16,5 @@
 %!   assert_simple (! isempty (regexp (errmsg, '\(1,1\).*Abs err 1 exceeds tol 0.1')));
 %!   assert_simple (! isempty (regexp (errmsg, '\(2,1\).*Rel err 2 exceeds tol 0.2')));
 %! end_try_catch
+%!test
+%! assert_handler([]);

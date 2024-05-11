@@ -9,3 +9,5 @@
 %!assert (100, 100+100*eps, -2*eps)
 %!error <Rel err .* exceeds tol> assert_simple (100+300*eps, 100, -2*eps)
 %!error <Rel err .* exceeds tol> assert_simple (100, 100+300*eps, -2*eps)
+%!test
+%! assert_handler([]);

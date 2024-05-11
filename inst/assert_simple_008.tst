@@ -20,3 +20,5 @@
 %!error <Expected string, but observed struct> assert_simple (struct ("dog", 3), "dog")
 %!error <Expected cell, but observed double> assert_simple (1, {1})
 %!error <Dimensions don't match> assert_simple (cell (1,2,3), cell (3,2,1))
+%!test
+%! assert_handler([]);

@@ -32,3 +32,5 @@
 %! x.b = 1;
 %! y.a = 1;
 %! assert_simple (x,y);
+%!test
+%! assert_handler([]);

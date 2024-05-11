@@ -12,3 +12,5 @@
 %! x = resize (x, 0, 1);
 %! y = resize (y, 0, 1);
 %! assert_simple (x, y);
+%!test
+%! assert_handler([]);

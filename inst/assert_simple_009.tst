@@ -10,3 +10,5 @@
 %!error <Function handles don't match> assert_simple (@sin, @cos)
 %!error <Expected function handle, but observed double> assert_simple (pi, @cos)
 %!error <Class function_handle != double> assert_simple (@sin, pi)
+%!test
+%! assert_handler([]);

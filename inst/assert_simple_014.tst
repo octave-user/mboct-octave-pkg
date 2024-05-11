@@ -9,3 +9,5 @@
 %! end_try_catch
 %!error <Invalid call> assert_simple ()
 %!error <Invalid call> assert_simple (1,2,3,4)
+%!test
+%! assert_handler([]);

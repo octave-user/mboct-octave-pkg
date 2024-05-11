@@ -15,3 +15,5 @@
 %! end_try_catch
 %!error <'NA' mismatch> assert_simple (NA, 1)
 %!error assert_simple ([NA 1]', [1 NA]')
+%!test
+%! assert_handler([]);
