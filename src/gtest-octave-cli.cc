@@ -20,90 +20,35 @@
 #include <string>
 #include <oct-env.h>
 #include <octave.h>
+#include "gtest-octave.h"
 
-#include <gtest/gtest.h>
-
-extern "C" OCTAVE_API void octave_block_async_signals (void);
-
-class GTestOctaveCLI: public testing::Test {
+class GTestOctaveCLI: public GTestOctaveBase {
 public:
      GTestOctaveCLI(int argc, char* argv[])
-          :argc(argc), argv(argv) {
+          :GTestOctaveBase(argc, argv) {
      }
 
-     virtual void TestBody() override {
+     virtual int Execute() override {
           octave_block_async_signals ();
 
           octave::sys::env::set_program_name (argv[0]);
 
           octave::cli_application app (argc, argv);
 
-          int ret = app.execute();
-
-          if (ret != 0) {
-               ADD_FAILURE_AT(__FILE__, __LINE__) << "app.execute() returned with status " << ret;
-          }
+          return app.execute();
      }
-private:
-     const int argc;
-     char** const argv;
+
+     static GTestOctaveBase* Allocate(int argc, char** argv) {
+          return new GTestOctaveCLI(argc, argv);
+     }
+     
+     static int Run(int argc, char** argv) {
+          return GTestOctaveBase::Run(argc, argv, &Allocate);
+     }
 };
 
 int
 main (int argc, char **argv)
 {
-     testing::InitGoogleTest(&argc, argv);
-
-     std::string strTestSuiteName = "mboct-octave-pkg: <<unknown testsuite>>", strTestName = "mboct-octave-pkg: <<unknown test>>";
-
-     std::ostringstream os;
-
-     for (int i = 0; i < argc; ++i) {
-          bool bRemoveArg = false;
-
-          if (0 == strcmp(argv[i], "--test-name")) {
-               if (!(argc > i + 1)) {
-                    std::cerr << argv[0] << ": missing argument for --test-name\n";
-                    return 1;
-               }
-
-               strTestName = argv[i + 1];
-
-               bRemoveArg = true;
-          } else if (0 == strcmp(argv[i], "--test-suite-name")) {
-               if (!(argc > i + 1)) {
-                    std::cerr << argv[0] << ": missing argument for --test-suite-name\n";
-                    return 1;
-               }
-
-               strTestSuiteName = argv[i + 1];
-
-               bRemoveArg = true;
-          }
-
-          if (bRemoveArg) {
-               for (int j = i; j + 2 <= argc; ++j) {
-                    argv[j] = argv[j + 2];
-               }
-
-               argc -= 2;
-               --i;
-          } else {
-               os << argv[i] << ' ';
-          }
-     }
-
-     os << std::ends;
-
-     const std::string strProgramArgs = os.str();
-
-     testing::RegisterTest(strTestSuiteName.c_str(),
-                           strTestName.c_str(),
-                           nullptr,
-                           strProgramArgs.c_str(),
-                           __FILE__,
-                           __LINE__,
-                           [=]() -> GTestOctaveCLI* { return new GTestOctaveCLI(argc, argv); });
-
-     return RUN_ALL_TESTS();
+     return GTestOctaveCLI::Run(argc, argv);
 }
