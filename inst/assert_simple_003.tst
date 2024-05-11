@@ -1,5 +1,6 @@
 ## assert_simple.m:03
 %!test  # N-D matrix
+%! assert_handler(@(err) []);
 %! X = zeros (2,2,3);
 %! Y = X;
 %! Y(1,2,3) = 1.5;

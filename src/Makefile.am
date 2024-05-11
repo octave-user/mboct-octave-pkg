@@ -13,11 +13,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program; If not, see <http://www.gnu.org/licenses/>.
 
-oct_OBJ:=spawn.@OBJEXT@ shell.@OBJEXT@
-
-if USE_GTEST
-  oct_OBJ+=gtest_fail.@OBJEXT@
-endif
+oct_OBJ:=spawn.@OBJEXT@ shell.@OBJEXT@ gtest_fail.@OBJEXT@
 
 oct_FILE:=__mboct_octave_proc__.oct
 

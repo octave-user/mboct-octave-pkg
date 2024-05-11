@@ -13,13 +13,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; If not, see <http://www.gnu.org/licenses/>.
 
+#include "config.h"
+
 #include <octave/oct.h>
+
+#ifdef HAVE_GTEST
 #include <gtest/gtest.h>
 #include <vector>
+#endif
 
 // PKG_ADD: autoload ("gtest_fail", "__mboct_octave_proc__.oct");
 // PKG_DEL: autoload ("gtest_fail", "__mboct_octave_proc__.oct", "remove");
 
+#ifdef HAVE_GTEST
 struct StackRecord {
      StackRecord(const std::string& filetmp = __FILE__, int linetmp = __LINE__, int columntmp = -1)
           :file(filetmp), line(linetmp), column(columntmp), trace(file.c_str(), line, column) {
@@ -37,6 +43,7 @@ struct StackRecord {
      const int column;
      const testing::ScopedTrace trace;
 };
+#endif
 
 DEFUN_DLD (gtest_fail, args, nargout,
           "-*- texinfo -*-\n"
@@ -52,6 +59,7 @@ DEFUN_DLD (gtest_fail, args, nargout,
           return octave_value_list();
      }
 
+#ifdef HAVE_GTEST
      const octave_scalar_map last_err = args(0).scalar_map_value();
      const std::string message = last_err.getfield("message").string_value();
      const octave_map stack = last_err.getfield("stack").map_value();
@@ -78,6 +86,9 @@ DEFUN_DLD (gtest_fail, args, nargout,
      }
 
      ADD_FAILURE_AT(rgStack.front().file.c_str(), rgStack.front().line) << message;
+#else
+     warning_with_id("mboct-octave-pkg:gtest_fail", "mboct-octave-pkg was not compiled with gtest");
+#endif
 
      return octave_value_list();
 }

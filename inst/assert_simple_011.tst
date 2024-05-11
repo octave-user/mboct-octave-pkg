@@ -1,5 +1,6 @@
 ## assert_simple.m:11
 %!test
+%! assert_handler(@(err) []);
 %! x.a = 1; x.b=[2, 2];
 %! y.a = 1; y.b=[2, 2];
 %! assert_simple (x, y);

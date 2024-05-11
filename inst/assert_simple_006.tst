@@ -1,5 +1,6 @@
 ## assert_simple.m:06
 %!test
+%! assert_handler(@(err) []);
 %! try
 %!   assert_simple ([NaN 1], [1 NaN]);
 %! catch

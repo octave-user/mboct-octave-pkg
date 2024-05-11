@@ -1,5 +1,6 @@
 ## assert_simple.m:01
 %!test
+%! assert_handler(@(err) []);
 %! N = 1000;
 %! for i=1:100
 %!   A = rand(N, N);
@@ -51,3 +52,7 @@
 %!assert ([1,2;3,4],[1,2;3,4])
 %!error assert_simple ([1,4;3,4],[1,2;3,4])
 %!error <Dimensions don't match> assert_simple ([1,3;2,4;3,5],[1,2;3,4])
+%!error assert_simple(2 == 1);
+%!error assert_simple(2, 1);
+%!error assert_simple(2, 1, eps);
+%!error assert_simple(ones(3,3), zeros(3,3), eps);

@@ -119,9 +119,7 @@ function assert_simple(varargin)
       error("Abs err %.5g exceeds tol %.5g\nassert_simple %s failed", difference, tolerance, argin);
     endif
   catch
-    if (3 == exist("gtest_fail", "file") && ~isempty(which("gtest_fail")))
-      gtest_fail(lasterror());
-    endif
+    assert_handler()(lasterror());
 
     rethrow(lasterror());
   end_try_catch
@@ -156,8 +154,3 @@ function real_assert(argin, args)
     error("%s\tassert_simple %s failed", err.message, argin);
   endif
 endfunction
-
-%!error assert_simple(2 == 1);
-%!error assert_simple(2, 1);
-%!error assert_simple(2, 1, eps);
-%!error assert_simple(ones(3,3), zeros(3,3), eps);

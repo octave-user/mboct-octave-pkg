@@ -1,5 +1,6 @@
 ## assert_simple.m:07
 %!test
+%! assert_handler(@(err) []);
 %! try
 %!   assert_simple ([NA 1]', [1 NA]');
 %! catch

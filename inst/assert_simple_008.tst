@@ -1,5 +1,6 @@
 ## assert_simple.m:08
 %!test
+%! assert_handler(@(err) []);
 %! try
 %!   assert_simple (complex (Inf, 0.2), complex (-Inf, 0.2 + 2*eps), eps);
 %! catch

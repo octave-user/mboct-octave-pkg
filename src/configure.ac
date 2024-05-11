@@ -163,9 +163,6 @@ CPPFLAGS="${CPPFLAGS} ${GTEST_CPPFLAGS}"
 LIBS="${LIBS} ${GTEST_LIBS}"
 LDFLAGS="${LDFLAGS} ${GTEST_LDFLAGS}"
 
-## mkoctfile -I/opt/googletest/include -lgtest -L/opt/googletest/lib -Wl,-rpath=/opt/googletest/lib -Wl,-rpath=/opt/octave-9.1.1/lib/octave/9.1.1 -Wl,-rpath=/opt/gcc/lib64 --link-stand-alone gtest-octave-cli.cc -o gtest-octave-cli
-## mkoctfile -I/opt/googletest/include -lgtest -L/opt/googletest/lib -Wl,-rpath=/opt/googletest/lib -Wl,-rpath=/opt/octave-9.1.1/lib/octave/9.1.1 -Wl,-rpath=/opt/gcc/lib64 gtest_fail.cc
-
 AC_CHECK_HEADERS(gtest/gtest.h)
 
 have_gtest="no"
@@ -193,6 +190,7 @@ if ! test "${have_gtest}" = "yes"; then
   CPPFLAGS="${TCPPFLAGS}"
   LDFLAGS="${TLDFLAGS}"
   LIBS="${TLIBS}"
+  AC_DEFINE(HAVE_GTEST, [1], [define if GoogleTest can be used])
 fi
 
 AM_CONDITIONAL([USE_GTEST], [test ${have_gtest} = "yes"])

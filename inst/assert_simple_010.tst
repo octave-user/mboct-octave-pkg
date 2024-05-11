@@ -1,5 +1,6 @@
 ## assert_simple.m:10
 %!test
+%! assert_handler(@(err) []);
 %! x = {[3], [1,2,3]; 100+100*eps, "dog"};
 %! y = x;
 %! assert_simple (x, y);

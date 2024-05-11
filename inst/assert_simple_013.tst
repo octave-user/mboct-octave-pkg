@@ -1,5 +1,6 @@
 ## assert_simple.m:13
 %!test
+%! assert_handler(@(err) []);
 %! x = [1 2; 3 4];
 %! y = [0 -1; 1 2];
 %! tol = [-0.1 0; -0.2 0.3];

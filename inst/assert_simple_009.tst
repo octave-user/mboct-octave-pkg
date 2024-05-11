@@ -1,5 +1,6 @@
 ## assert_simple.m:09
 %!test
+%! assert_handler(@(err) []);
 %! x = {{{1}}, 2};  # cell with multiple levels
 %! y = x;
 %! assert_simple (x,y);

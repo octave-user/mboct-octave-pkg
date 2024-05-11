@@ -1,5 +1,6 @@
 ## assert_simple.m:12
 %!test
+%! assert_handler(@(err) []);
 %! x = [-40:0];
 %! y1 = (10.^x).*(10.^x);
 %! y2 = 10.^(2*x);

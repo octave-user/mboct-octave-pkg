@@ -1,5 +1,6 @@
 ## assert_simple.m:14
 %!test <*57615>
+%! assert_handler(@(err) []);
 %! try
 %!   assert_simple (complex (pi*1e-17,2*pi), 0, 1e-1);
 %! catch

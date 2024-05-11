@@ -1,5 +1,7 @@
 ## assert_simple.m:05
-%!test  assert_simple (100+100*eps, 100, -2*eps);
+%!test
+%! assert_handler(@(err) []);
+%! assert_simple (100+100*eps, 100, -2*eps);
 %!error <Abs err 2.8422e-0?14 exceeds tol> assert_simple (100+100*eps, 100, 2*eps)
 %!error <Abs err 2 exceeds tol 0.1> assert_simple (2, 0, -0.1)
 %!error <Class single != double> assert_simple (single (1), 1)
