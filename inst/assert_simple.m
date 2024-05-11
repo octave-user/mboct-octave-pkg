@@ -74,55 +74,49 @@ function assert_simple(varargin)
 
   argin = ["(" strjoin(arg_names, ",") ")"];
 
-  try
-    switch (nargin)
-      case {2, 3}
-      otherwise
-        real_assert(argin, varargin);
-        return
-    endswitch
-
-    observed = varargin{1};
-    expected = varargin{2};
-
-    if (nargin >= 3)
-      tolerance = varargin{3};
-    else
-      tolerance = 0;
-    endif
-
-    size_observed = size(observed);
-    size_expected = size(expected);
-
-    size_test = size(size_observed) == size(size_expected) && isscalar(tolerance) && all(size_observed == size_expected);
-    class_test = strcmp(class(observed), class(expected));
-    numeric_test = isnumeric(observed) && isnumeric(expected);
-    sparse_test = issparse(observed) == issparse(expected);
-    scalar_test = ~(isscalar(observed) && isscalar(expected));
-
-    if (numeric_test)
-      finite_test = really_all(isfinite(observed) && isfinite(expected));
-    else
-      finite_test = true;
-    endif
-
-    tol_test = tolerance >= 0;
-
-    if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
+  switch (nargin)
+    case {2, 3}
+    otherwise
       real_assert(argin, varargin);
-      return;
-    endif
+      return
+  endswitch
 
-    difference = really_max(abs(observed - expected));
+  observed = varargin{1};
+  expected = varargin{2};
 
-    if (difference > tolerance)
-      error("Abs err %.5g exceeds tol %.5g\nassert_simple %s failed", difference, tolerance, argin);
-    endif
-  catch
-    assert_handler()(lasterror());
+  if (nargin >= 3)
+    tolerance = varargin{3};
+  else
+    tolerance = 0;
+  endif
 
-    rethrow(lasterror());
-  end_try_catch
+  size_observed = size(observed);
+  size_expected = size(expected);
+
+  size_test = size(size_observed) == size(size_expected) && isscalar(tolerance) && all(size_observed == size_expected);
+  class_test = strcmp(class(observed), class(expected));
+  numeric_test = isnumeric(observed) && isnumeric(expected);
+  sparse_test = issparse(observed) == issparse(expected);
+  scalar_test = ~(isscalar(observed) && isscalar(expected));
+
+  if (numeric_test)
+    finite_test = really_all(isfinite(observed) && isfinite(expected));
+  else
+    finite_test = true;
+  endif
+
+  tol_test = tolerance >= 0;
+
+  if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
+    real_assert(argin, varargin);
+    return;
+  endif
+
+  difference = really_max(abs(observed - expected));
+
+  if (difference > tolerance)
+    error("Abs err %.5g exceeds tol %.5g\nassert_simple %s failed", difference, tolerance, argin);
+  endif
 endfunction
 
 function flag = really_all(x)

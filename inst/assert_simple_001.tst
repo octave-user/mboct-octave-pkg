@@ -1,6 +1,6 @@
 ## assert_simple.m:01
 %!test
-%! assert_handler(@(err) []);
+%! try
 %! N = 1000;
 %! for i=1:100
 %!   A = rand(N, N);
@@ -10,6 +10,11 @@
 %!   endif
 %!   fail("assert_simple(A, B, 0)");
 %! endfor
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error assert_simple ([])
 %!error assert_simple ("")
 %!error assert_simple ({})
@@ -56,5 +61,3 @@
 %!error assert_simple(2, 1);
 %!error assert_simple(2, 1, eps);
 %!error assert_simple(ones(3,3), zeros(3,3), eps);
-%!test
-%! assert_handler([]);

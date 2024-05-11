@@ -1,6 +1,6 @@
 ## assert_simple.m:06
 %!test
-%! assert_handler(@(err) []);
+%! try
 %! try
 %!   assert_simple ([NaN 1], [1 NaN]);
 %! catch
@@ -13,7 +13,17 @@
 %!     error ("Abs err reported for NaN assert");
 %!   endif
 %! end_try_catch
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error <'NA' mismatch> assert_simple (NA, 1)
 %!error assert_simple ([NA 1]', [1 NA]')
 %!test
-%! assert_handler([]);
+%! try
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch

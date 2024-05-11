@@ -1,6 +1,6 @@
 ## assert_simple.m:11
 %!test
-%! assert_handler(@(err) []);
+%! try
 %! x.a = 1; x.b=[2, 2];
 %! y.a = 1; y.b=[2, 2];
 %! assert_simple (x, y);
@@ -12,5 +12,15 @@
 %! x = resize (x, 0, 1);
 %! y = resize (y, 0, 1);
 %! assert_simple (x, y);
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!test
-%! assert_handler([]);
+%! try
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch
