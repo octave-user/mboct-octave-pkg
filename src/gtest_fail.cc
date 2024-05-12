@@ -80,8 +80,6 @@ DEFUN_DLD (gtest_fail, args, nargout,
      } else {
           const octave_idx_type n = stack.numel();
 
-          retval.resize(n);
-
           for (octave_idx_type i = 0; i < n; ++i) {
                std::string fn = file(i).string_value();
 
@@ -89,7 +87,7 @@ DEFUN_DLD (gtest_fail, args, nargout,
                     fn = test_function;
                }
 
-               retval(i) = octave_value(new StackRecord(fn, line(i).int_value(), column(i).int_value()));
+               retval.append(octave_value(new StackRecord(fn, line(i).int_value(), column(i).int_value())));
           }
      }
 
