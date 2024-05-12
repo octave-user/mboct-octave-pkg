@@ -26,7 +26,7 @@
 // PKG_DEL: autoload ("gtest_fail", "__mboct_octave_proc__.oct", "remove");
 
 #ifdef HAVE_GTEST
-struct StackRecord {
+struct StackRecord: public octave_base_value {
      StackRecord(const std::string& filetmp = __FILE__, int linetmp = __LINE__, int columntmp = -1)
           :file(filetmp), line(linetmp), column(columntmp), trace(file.c_str(), line, column) {
      }
@@ -36,6 +36,10 @@ struct StackRecord {
            line(oRecord.line),
            column(oRecord.column),
            trace(file.c_str(), line, column) {
+     }
+
+     virtual void print (std::ostream& os, bool pr_as_read_syntax) override {
+          os << file << ":" << line << ":" << column << "\n";
      }
 
      const std::string file;
@@ -54,9 +58,11 @@ DEFUN_DLD (gtest_fail, args, nargout,
            "@end example\n"
            "@end deftypefn\n")
 {
+     octave_value_list retval;
+
      if (args.length() < 1 || args.length() > 2) {
           print_usage();
-          return octave_value_list();
+          return retval;
      }
 
 #ifdef HAVE_GTEST
@@ -69,27 +75,30 @@ DEFUN_DLD (gtest_fail, args, nargout,
      const Cell line = stack.getfield("line");
      const Cell column = stack.getfield("column");
 
-     std::vector<StackRecord> rgStack;
-     rgStack.reserve(std::max<octave_idx_type>(1, stack.numel()));
-
      if (stack.isempty()) {
-          rgStack.emplace_back(__FILE__, __LINE__);
+          retval.append(octave_value(new StackRecord(__FILE__, __LINE__)));
      } else {
-          for (octave_idx_type i = 0; i < stack.numel(); ++i) {
+          const octave_idx_type n = stack.numel();
+
+          retval.resize(n);
+
+          for (octave_idx_type i = 0; i < n; ++i) {
                std::string fn = file(i).string_value();
 
                if (fn.empty()) {
                     fn = test_function;
                }
 
-               rgStack.emplace_back(fn, line(i).int_value(), column(i).int_value());
+               retval(i) = octave_value(new StackRecord(fn, line(i).int_value(), column(i).int_value()));
           }
      }
 
-     ADD_FAILURE_AT(rgStack.front().file.c_str(), rgStack.front().line) << message;
+     const auto pFront = dynamic_cast<const StackRecord*>(retval(0).internal_rep());
+
+     ADD_FAILURE_AT(pFront->file.c_str(), pFront->line) << message;
 #else
      warning_with_id("mboct-octave-pkg:gtest_fail", "mboct-octave-pkg was not compiled with gtest");
 #endif
 
-     return octave_value_list();
+     return retval;
 }
