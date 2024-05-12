@@ -47,14 +47,14 @@ struct StackRecord {
 
 DEFUN_DLD (gtest_fail, args, nargout,
           "-*- texinfo -*-\n"
-           "@deftypefn {} gtest_fail(@var{last_err})\n\n"
+           "@deftypefn {} gtest_fail(@var{last_err}, @var{test_function})\n\n"
            "Pass exception information to the GoogleTest library (e.g. to be used in assert_simple)\n\n"
            "@example\n"
            "gtest_fail(lasterror())\n"
            "@end example\n"
            "@end deftypefn\n")
 {
-     if (args.length() != 1) {
+     if (args.length() < 1 || args.length() > 2) {
           print_usage();
           return octave_value_list();
      }
@@ -63,6 +63,7 @@ DEFUN_DLD (gtest_fail, args, nargout,
      const octave_scalar_map last_err = args(0).scalar_map_value();
      const std::string message = last_err.getfield("message").string_value();
      const octave_map stack = last_err.getfield("stack").map_value();
+     const std::string test_function = args.length() > 1 ? args(1).string_value() : std::string("%__GTEST_FAIL_UNKNOWN_FUNCTION__%");
 
      const Cell file = stack.getfield("file");
      const Cell line = stack.getfield("line");
@@ -78,7 +79,7 @@ DEFUN_DLD (gtest_fail, args, nargout,
                std::string fn = file(i).string_value();
 
                if (fn.empty()) {
-                    fn = "<unknown file>";
+                    fn = test_function;
                }
 
                rgStack.emplace_back(fn, line(i).int_value(), column(i).int_value());
