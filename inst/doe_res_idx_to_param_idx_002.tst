@@ -1,5 +1,6 @@
 ## doe_res_idx_to_param_idx.m:02
 %!demo
+%! try
 %! x = linspace(-pi / 2, pi / 2, 30);
 %! y = linspace(-pi / 3, pi / 3, 25);
 %! dim = int32([numel(x), numel(y)]);
@@ -28,3 +29,8 @@
 %! xlabel("x");
 %! ylabel("y");
 %! title("f(x,y) = sin(x^2 + y^2)");
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

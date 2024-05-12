@@ -6,6 +6,12 @@
 /* Define to 1 if you have the `execvp' function. */
 #undef HAVE_EXECVP
 
+/* define if GoogleTest can be used */
+#undef HAVE_GTEST
+
+/* Define to 1 if you have the <gtest/gtest.h> header file. */
+#undef HAVE_GTEST_GTEST_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

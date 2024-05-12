@@ -1,5 +1,6 @@
 ## pdf_merge.m:01
 %!test
+%! try
 %! output_name = tempname();
 %! hnd = [];
 %! hnd(end + 1) = figure("visible", "off");
@@ -14,3 +15,8 @@
 %! pdf_merge(fname, [output_name, ".pdf"]);
 %! [err] = unlink([output_name, ".pdf"]);
 %! assert(err, 0);
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

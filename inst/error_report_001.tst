@@ -1,6 +1,7 @@
 ## error_report.m:01
 %!test
 %! try
+%! try
 %!   x = 1:3;
 %!   x(-1) = 5;
 %! catch
@@ -14,4 +15,9 @@
 %!       [~] = unlink(fname);
 %!     endif
 %!  end_unwind_protect
+%! end_try_catch
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
 %! end_try_catch

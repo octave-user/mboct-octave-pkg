@@ -1,5 +1,6 @@
 ## pdf_create.m:01
 %!test
+%! try
 %! output_name = "";
 %! h = zeros(1, 2);
 %! unwind_protect
@@ -23,3 +24,8 @@
 %!  endif
 %! endfor
 %! end_unwind_protect
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

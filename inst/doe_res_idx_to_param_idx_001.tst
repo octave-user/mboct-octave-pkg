@@ -1,5 +1,6 @@
 ## doe_res_idx_to_param_idx.m:01
 %!test
+%! try
 %! x = linspace(-pi / 2, pi / 2, 3);
 %! y = linspace(-pi / 3, pi / 3, 5);
 %! z = linspace(-pi / 4, pi / 3, 9);
@@ -32,3 +33,8 @@
 %!    endfor
 %!  endfor
 %! endfor
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

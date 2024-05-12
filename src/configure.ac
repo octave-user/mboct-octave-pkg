@@ -1,4 +1,4 @@
-dnl  Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+dnl  Copyright (C) 2018(-2024) Reinhard <octave-user@a1.net>
 
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE
 
+AC_ARG_VAR([PKG_CONFIG],[Program to return meta information about installed libraries])
+
 AC_CHECK_PROG(MKOCTFILE, mkoctfile, mkoctfile)
 
 if test -z "$MKOCTFILE"; then
@@ -33,12 +35,20 @@ if test -z "$OCTAVE_CONFIG"; then
   AC_MSG_ERROR([octave-config not found], 1);
 fi
 
+PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
+
 OCTINCLUDEDIR="${OCTINCLUDEDIR:-`${MKOCTFILE} -p INCFLAGS`}"
 OCTLIBDIR="${OCTLIBDIR:-`${MKOCTFILE} -p OCTLIBDIR`}"
 OCTLIBS="${OCTLIBS:-`${MKOCTFILE} -p LIBOCTAVE` `${MKOCTFILE} -p LIBOCTINTERP`}"
 OCTLDFLAGS="${OCTLDFLAGS:--L${OCTLIBDIR} -Wl,-rpath=${OCTLIBDIR} -Wl,--no-undefined}"
 CXX="${CXX:-`${MKOCTFILE} -p CXX`}"
 CXXFLAGS="${CXXFLAGS} `${MKOCTFILE} -p CXXFLAGS`"
+
+GTEST_LIBDIR="${GTEST_LIBDIR:-`${PKG_CONFIG} --libs-only-L gtest`}"
+GTEST_LDFLAGS="${GTEST_LDFLAGS:-`echo ${GTEST_LIBDIR} | sed 's/^-L/-Wl,-rpath=/'`}"
+GTEST_LIBS="${GTEST_LIBS:-`${PKG_CONFIG} --libs gtest`}"
+GTEST_LIBS="${GTEST_LIBS:--lgtest}"
+GTEST_CPPFLAGS="${GTEST_CPPFLAGS:-`${PKG_CONFIG} --cflags gtest`}"
 
 AC_PROG_CXX
 AC_LANG(C++)
@@ -108,7 +118,7 @@ AC_CHECK_HEADERS(unistd.h)
 AC_CHECK_HEADERS(sys/types.h)
 AC_CHECK_HEADERS(sys/wait.h)
 
-AC_CHECK_FUNCS(vfork execvp _exit waitpid)               
+AC_CHECK_FUNCS(vfork execvp _exit waitpid)
 AC_CHECK_FUNCS(spawnvp cwait)
 AC_CHECK_FUNCS(_spawnvp _cwait)
 
@@ -145,6 +155,46 @@ if test "${have_win32}" = "yes"; then
 else
   LIBS="${TLIBS}"
 fi
+
+TCPPFLAGS="${CPPFLAGS}"
+TLIBS="${LIBS}"
+TLDFLAGS="${LDFLAGS}"
+CPPFLAGS="${CPPFLAGS} ${GTEST_CPPFLAGS}"
+LIBS="${LIBS} ${GTEST_LIBS}"
+LDFLAGS="${LDFLAGS} ${GTEST_LDFLAGS}"
+
+AC_CHECK_HEADERS(gtest/gtest.h)
+
+have_gtest="no"
+
+if test "$ac_cv_header_gtest_gtest_h" = "yes" ; then
+   AC_MSG_CHECKING([for GoogleTest library])
+   AC_TRY_LINK([
+        #include <gtest/gtest.h>
+        TEST(OctaveGoogleTest, OctaveGoogleTest1)
+        {
+                try {
+                } catch (...) {
+                  ADD_FAILURE_AT(__FILE__, __LINE__);
+                }
+        }],[
+        int argc;
+        char** argv;
+        testing::InitGoogleTest(&argc, argv);
+        return RUN_ALL_TESTS();
+   ],[have_gtest=yes],[have_gtest=no])
+   AC_MSG_RESULT([${have_gtest}])
+fi
+
+if test "${have_gtest}" = "yes"; then
+  AC_DEFINE(HAVE_GTEST, [1], [define if GoogleTest can be used])
+else
+  CPPFLAGS="${TCPPFLAGS}"
+  LDFLAGS="${TLDFLAGS}"
+  LIBS="${TLIBS}"
+fi
+
+AM_CONDITIONAL([USE_GTEST], [test ${have_gtest} = "yes"])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

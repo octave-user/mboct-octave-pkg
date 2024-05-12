@@ -9,6 +9,8 @@ fntests.log
 # GNU Octave
 *.oct
 *.o
+src/gtest-octave-cli
+src/.deps
 
 # octave-forge.m4
 oct-alt-includes.h

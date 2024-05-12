@@ -1,5 +1,6 @@
 ## griddata_prepared.m:02
 %!demo
+%! try
 %! x = linspace(-pi, pi, 10);
 %! y = linspace(-pi, pi, 15);
 %! [xx, yy] = meshgrid(x, y);
@@ -14,3 +15,8 @@
 %!     zi(i, j) = griddata_prepared(xx, yy, zz, xi(i), yi(j), tri, "linear/nearest");
 %!   endfor
 %! endfor
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

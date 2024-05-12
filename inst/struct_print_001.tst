@@ -2,6 +2,7 @@
 %!function param = load_struct(fname)
 %! source(fname);
 %!test
+%! try
 %! param.x = 1;
 %! param.y = 1.5;
 %! param.s = "hello";
@@ -47,5 +48,10 @@
 %!    [~] = unlink(fname);
 %!  endif
 %! end_unwind_protect
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error struct_print();
 %!error struct_print(1,2,3,4);

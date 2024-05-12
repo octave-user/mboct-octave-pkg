@@ -1,5 +1,6 @@
 ## figure_export_ascii.m:02
 %!test
+%! try
 %! hfig = [];
 %! fd = -1;
 %! unwind_protect
@@ -24,3 +25,8 @@
 %!    [~] = unlink(output_file);
 %!  endif
 %! end_unwind_protect
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

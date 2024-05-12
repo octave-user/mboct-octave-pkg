@@ -1,4 +1,4 @@
-## Copyright (C) 2023(-2023) Reinhard <octave-user@a1.net>
+## Copyright (C) 2023(-2024) Reinhard <octave-user@a1.net>
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -66,10 +66,18 @@
 ## @end deftypefn
 
 function assert_simple(varargin)
+  arg_names = cell(nargin, 1);
+
+  for i=1:nargin
+    arg_names{i} = inputname(i, false);
+  endfor
+
+  argin = ["(" strjoin(arg_names, ",") ")"];
+
   switch (nargin)
     case {2, 3}
     otherwise
-      real_assert(varargin{:});
+      real_assert(argin, varargin);
       return
   endswitch
 
@@ -100,14 +108,14 @@ function assert_simple(varargin)
   tol_test = tolerance >= 0;
 
   if (~(scalar_test && tol_test && size_test && class_test && numeric_test && sparse_test && finite_test))
-    real_assert(varargin{:});
+    real_assert(argin, varargin);
     return;
   endif
 
   difference = really_max(abs(observed - expected));
 
   if (difference > tolerance)
-    error("Abs err %.5g exceeds tol %.5g", difference, tolerance);
+    error("Abs err %.5g exceeds tol %.5g\nassert_simple %s failed", difference, tolerance, argin);
   endif
 endfunction
 
@@ -127,16 +135,16 @@ function maxx = really_max(x)
   endwhile
 endfunction
 
-function real_assert(varargin)
+function real_assert(argin, args)
   err = [];
+
   try
-    assert(varargin{:});
+    assert(args{:});
   catch
     err = lasterror();
   end_try_catch
 
   if (~isempty(err))
-    rethrow(err);
+    error("%s\tassert_simple %s failed", err.message, argin);
   endif
 endfunction
-

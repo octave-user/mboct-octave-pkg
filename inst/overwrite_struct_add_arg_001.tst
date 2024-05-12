@@ -1,5 +1,6 @@
 ## overwrite_struct_add_arg.m:01
 %!test
+%! try
 %! ov.data.x = 1;
 %! ov.data.opts.y = rand(3, 3);
 %! ov.data.opts.name.z = "abc";
@@ -13,6 +14,11 @@
 %! assert(ov.data.x, 2);
 %! assert(ov.data.opts.y, zeros(3, 3));
 %! assert(ov.data.opts.name.z, "123");
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error
 %! ov.data.x = 1;
 %! ov.data.opts.y = rand(3, 3);
