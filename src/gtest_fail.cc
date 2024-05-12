@@ -31,16 +31,23 @@ struct StackRecord: public octave_base_value {
           :file(filetmp), line(linetmp), column(columntmp), trace(file.c_str(), line, column) {
      }
 
-     StackRecord(const StackRecord& oRecord)
-          :file(oRecord.file),
-           line(oRecord.line),
-           column(oRecord.column),
+     StackRecord()
+          :file(__FILE__),
+           line(__LINE__),
+           column(-1),
            trace(file.c_str(), line, column) {
      }
 
      virtual void print (std::ostream& os, bool pr_as_read_syntax) override {
           os << file << ":" << line << ":" << column << "\n";
      }
+
+     virtual size_t byte_size() const override { return sizeof(*this); };
+     virtual dim_vector dims() const override { return dim_vector(1,1); }
+     virtual bool is_constant(void) const override { return true; }
+     virtual bool is_defined(void) const override { return true; }
+     virtual bool isreal() const override { return false; }
+     virtual bool iscomplex() const override { return false; }
 
      const std::string file;
      const int line;
