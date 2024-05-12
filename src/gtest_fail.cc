@@ -81,12 +81,12 @@ DEFUN_DLD (gtest_fail, args, nargout,
      const Cell file = stack.getfield("file");
      const Cell line = stack.getfield("line");
      const Cell column = stack.getfield("column");
+     const octave_idx_type n = std::max<octave_idx_type>(1, stack.numel());
+     Cell rgStackRecords(dim_vector(n, 1));
      
      if (stack.isempty()) {
-          retval.append(octave_value(new StackRecord(__FILE__, __LINE__)));
+          rgStackRecords(0) = octave_value(new StackRecord(__FILE__, __LINE__));
      } else {
-          const octave_idx_type n = stack.numel();
-
           for (octave_idx_type i = 0; i < n; ++i) {
                std::string fn = file(i).string_value();
 
@@ -94,16 +94,18 @@ DEFUN_DLD (gtest_fail, args, nargout,
                     fn = test_function;
                }
 
-               retval.append(octave_value(new StackRecord(fn, line(i).int_value(), column(i).int_value())));
+               rgStackRecords(i) = octave_value(new StackRecord(fn, line(i).int_value(), column(i).int_value()));
           }
      }
 
-     const auto pFront = dynamic_cast<const StackRecord*>(retval(0).internal_rep());
+     const auto pFront = dynamic_cast<const StackRecord*>(rgStackRecords(0).internal_rep());
 
      ADD_FAILURE_AT(pFront->file.c_str(), pFront->line) << message;
+
+     retval.append(octave_value(rgStackRecords));
 #else
      warning_with_id("mboct-octave-pkg:gtest_fail", "mboct-octave-pkg was not compiled with gtest");
 #endif
 
-     return Cell(retval);
+     return retval;
 }
