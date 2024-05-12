@@ -81,7 +81,7 @@ DEFUN_DLD (gtest_fail, args, nargout,
      const Cell file = stack.getfield("file");
      const Cell line = stack.getfield("line");
      const Cell column = stack.getfield("column");
-
+     
      if (stack.isempty()) {
           retval.append(octave_value(new StackRecord(__FILE__, __LINE__)));
      } else {
@@ -105,5 +105,5 @@ DEFUN_DLD (gtest_fail, args, nargout,
      warning_with_id("mboct-octave-pkg:gtest_fail", "mboct-octave-pkg was not compiled with gtest");
 #endif
 
-     return retval;
+     return Cell(retval);
 }
