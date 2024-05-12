@@ -9,7 +9,7 @@
 
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch
 %!test
@@ -20,7 +20,7 @@
 
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch
 %!test
@@ -28,6 +28,6 @@
 %! exec_demo(which("exec_demo"), 1, 1, "test");
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch

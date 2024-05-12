@@ -10,13 +10,13 @@
 %! fail ("assert_simple (y1, y2 + eps*1e-70, eps (y1))");
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch
 %!test
 %! try
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch

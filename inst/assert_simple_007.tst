@@ -15,7 +15,7 @@
 %! end_try_catch
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch
 %!error assert_simple ([(complex (NA, 1)) (complex (2, NA))], [(complex (NA, 2)) 2])
@@ -25,6 +25,6 @@
 %! try
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch

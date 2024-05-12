@@ -31,6 +31,6 @@
 %! title("f(x,y) = sin(x^2 + y^2)");
 %! catch
 %!   gtest_error = lasterror();
-%!   gtest_fail(gtest_error);
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
 %!   rethrow(gtest_error);
 %! end_try_catch
