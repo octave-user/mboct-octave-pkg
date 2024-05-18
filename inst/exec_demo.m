@@ -29,7 +29,7 @@
 ##
 ## @end deftypefn
 
-function status = exec_demo(__file, index, first_line, type)
+function status = exec_demo(filename_in, index, first_line, type)
   if (nargin < 1 || nargin > 4)
     print_usage();
   endif
@@ -55,16 +55,16 @@ function status = exec_demo(__file, index, first_line, type)
     temp_file_name = strcat(tempname(), ".m");
 
     unwind_protect
-      [DIR, NAME, EXT] = fileparts(__file);
+      [DIR, NAME, EXT] = fileparts(filename_in);
 
       if (length(EXT) == 0)
-        __file = strcat(__file, ".m");
+        filename_in = strcat(filename_in, ".m");
       endif
 
-      [fid_in, msg] = fopen(__file, "rt");
+      [fid_in, msg] = fopen(filename_in, "rt");
 
       if (-1 == fid_in)
-        error("Failed to open file \"%s\": %s", __file, msg);
+        error("Failed to open file \"%s\": %s", filename_in, msg);
       endif
 
       [fid_out, msg] = fopen(temp_file_name, "wt");
@@ -92,7 +92,7 @@ function status = exec_demo(__file, index, first_line, type)
       endwhile
 
       if (f_demo_found == index)
-        fprintf(stderr, "Commands from demo %d of file \"%s\" are written to \"%s\" ...\n", f_demo_found, __file, temp_file_name);
+        fprintf(stderr, "Commands from demo %d of file \"%s\" are written to \"%s\" ...\n", f_demo_found, filename_in, temp_file_name);
 
         while ( 1 == 1 )
           line = fgets(fid_in);
@@ -128,6 +128,7 @@ function status = exec_demo(__file, index, first_line, type)
 
     try
       fprintf(stderr, "\nfile \"%s\" will be executed!\n", temp_file_name);
+      evalin("base", sprintf("__file='%s'", filename_in));
       evalin("base", sprintf("clear all; source('%s')", temp_file_name));
       status = 0;
     catch
