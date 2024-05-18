@@ -128,8 +128,7 @@ function status = exec_demo(filename_in, index, first_line, type)
 
     try
       fprintf(stderr, "\nfile \"%s\" will be executed!\n", temp_file_name);
-      evalin("base", sprintf("__file='%s'", filename_in));
-      evalin("base", sprintf("clear all; source('%s')", temp_file_name));
+      evalin("base", sprintf("clear all; __file='%s'; source('%s')", filename_in, temp_file_name));
       status = 0;
     catch
       fprintf(stderr, "\nerror in file \"%s\"\n", temp_file_name);
