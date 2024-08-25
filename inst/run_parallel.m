@@ -75,16 +75,16 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "reuse_subprocess"))
-    options.reuse_subprocess = false;
+    options.reuse_subprocess = true;
   endif
 
   if (~isfield(options, "waitpid_polling_period"))
     options.waitpid_polling_period = 10e-3;
   endif
 
-  if (~isfield(options, "waitpid_polling_prio"))
-    options.waitpid_polling_prio = int32(100);
-  endif
+  ## if (~isfield(options, "waitpid_polling_prio"))
+  ##   options.waitpid_polling_prio = int32(100);
+  ## endif
 
   last_octave_arg = numel(options.octave_args_append) + 1;
 
@@ -151,18 +151,20 @@ function res = run_parallel(options, func, varargin)
         ##   setpriority(PRIO_PROCESS, getpid(), prio + options.waitpid_polling_prio);
 
         while (number_of_active_tasks >= options.number_of_processors)
-          for j=1:i-1
-            if (status(j) == -1)
+          pause(options.waitpid_polling_period);          
+          ##printf("number_of_active_tasks = %d\n", number_of_active_tasks);
+          for j=1:numel(pid)
+            if (status(j) == -1 && pid(j) > 0)
               [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
+              #printf("spawn_wait(%d): status=%d, pid=%d\n", pid(j), status_wait, pid_wait);
+              if (pid_wait > 0)
 
-              if (pid_wait > 0 && status_wait > 0)
-                status(j) = status_wait;
+                #printf("process %d returned\n", pid_wait);
+                status(j) = WEXITSTATUS(status_wait);
                 --number_of_active_tasks;
                 break;
               endif
             endif
-
-            pause(options.waitpid_polling_period);
           endfor
         endwhile
         ## unwind_protect_cleanup
