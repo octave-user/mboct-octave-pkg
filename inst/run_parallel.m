@@ -37,7 +37,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   output_dir = fullfile(tempdir(), sprintf("octave-run_parallel_%04d", getpid()));
-  
+
   if (~isfield(options, "number_of_processors"))
     error("missing field options.number_of_processors");
   endif
@@ -57,17 +57,21 @@ function res = run_parallel(options, func, varargin)
   if (~isfield(options, "octave_exec"))
     options.octave_exec = fullfile(OCTAVE_HOME, "bin", "octave-cli");
   endif
-  
+
+  if (~isfield(options, "octave_args_append"))
+    options.octave_args_append = {};
+  endif
+
   if (options.number_of_parameters < options.number_of_processors)
     options.number_of_processors = options.number_of_parameters;
   endif
 
   res = cell(1, options.number_of_parameters);
-  
+
   pid = repmat(uint64(-1), 1, options.number_of_processors);
 
   status_dir = 0;
-  
+
   unwind_protect
     status_dir = mkdir(output_dir);
 
@@ -77,7 +81,7 @@ function res = run_parallel(options, func, varargin)
 
     try
       output_files = cell(1, options.number_of_processors);
-      
+
       for i=1:options.number_of_processors
         output_files{i} = fullfile(output_dir, sprintf("result_%02d.mat", i));
       endfor
@@ -91,26 +95,27 @@ function res = run_parallel(options, func, varargin)
       endif
 
       input_data_file = fullfile(output_dir, "input_data.mat");
-      
+
       oct_path = path();
-      
+
       data.options = options;
       data.job.user_func = func;
       data.job.user_args = varargin;
       data.job.output_files = output_files;
-      
+
       save("-binary", input_data_file, "data", "oct_path");
 
       if (options.verbose)
         start_time = tic();
       endif
-      
+
       for i=1:options.number_of_processors
         args ={"--no-gui", ...
                "--no-history", ...
                "--norc", ...
                "--no-init-file", ...
                "-q", ...
+               options.octave_args_append{:}, ...
                helper_script, ...
                "--function", ...
                "run_parallel_func", ...
@@ -131,35 +136,35 @@ function res = run_parallel(options, func, varargin)
       endfor
 
       res = cell(1, options.number_of_parameters);
-      
+
       for i=1:numel(output_files)
         res_i = load(output_files{i}, "res").res;
-        
+
         for j=i:options.number_of_processors:options.number_of_parameters
           res{j} = res_i{j};
         endfor
 
         if (options.verbose)
           fprintf(stderr, "%d: removing file \"%s\" ...\n", getpid(), output_files{i});
-        endif        
-        
+        endif
+
         if (0 ~= unlink(output_files{i}))
           warning("failed to remove file \"%s\"", output_files{i});
         endif
       endfor
 
-      if (options.verbose)        
+      if (options.verbose)
         toc(start_time);
       endif
     catch
       current_exception = lasterror();
-      
+
       for i=1:numel(pid)
         if (pid(i) > 0)
           if (0 ~= kill(pid(i), SIG.TERM))
             warning("failed to terminate process %d", pid(i));
           endif
-          
+
           status = spawn_wait(pid(i));
 
           if (options.verbose)
@@ -185,4 +190,3 @@ function res = run_parallel(options, func, varargin)
     endif
   end_unwind_protect
 endfunction
-
