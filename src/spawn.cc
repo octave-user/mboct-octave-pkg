@@ -234,35 +234,6 @@ DEFUN_DLD(spawn_wait, args, nargout,
      pid_t res = _cwait(&status, pid, options);
 #else
      pid_t res = ::waitpid(pid, &status, options);
-
-     // if (res == pid)
-     // {
-     //      if (WIFEXITED(status))
-     //      {
-     //           status = WEXITSTATUS(status);
-     //      }
-     //      else
-     //      {
-     //           if (WIFSIGNALED(status))
-     //           {
-     //                error("process %d killed by signal %d", pid, WTERMSIG(status));
-     //           }
-     //           else if(WIFSTOPPED(status))
-     //           {
-     //                error("process %d stopped", pid);
-     //           }
-     //           else if (WIFCONTINUED(status))
-     //           {
-     //                error("process %d continued", pid);
-     //           }
-     //           else
-     //           {
-     //                error("an unknown error occured in process %d", pid);
-     //           }
-
-     //           status = -1;
-     //      }
-     // }
 #endif
 
      if (res != pid && nargout < 2)
