@@ -81,7 +81,11 @@ try
 
   addpath(input_data.oct_path);
 
-  feval(func, proc_idx, input_data.data);
+  function feval_clear_all_wrapper(func, proc_idx, input_data.data)
+    feval(func, proc_idx, input_data.data);
+  endfunction
+
+  feval_clear_all_wrapper(func, proc_idx, input_data.data);
 
   if (input_data.data.options.verbose)
     fprintf(stderr, "exiting process %d ...\n", getpid());
