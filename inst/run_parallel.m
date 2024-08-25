@@ -74,11 +74,30 @@ function res = run_parallel(options, func, varargin)
     options.number_of_processors = options.number_of_parameters;
   endif
 
+  if (~isfield(options, "reuse_subprocess"))
+    options.reuse_subprocess = true;
+  endif
+
+  if (~isfield(options, "waitpid_polling_period"))
+    options.waitpid_polling_period = 10e-3;
+  endif
+
+  if (~isfield(options, "waitpid_polling_prio"))
+    options.waitpid_polling_prio = int32(100);
+  endif
+
   last_octave_arg = numel(options.octave_args_append) + 1;
 
   res = cell(1, options.number_of_parameters);
 
-  pid = repmat(uint64(-1), 1, options.number_of_processors);
+  if (options.reuse_subprocess)
+    number_of_tasks = options.number_of_processors;
+  else
+    number_of_tasks = options.number_of_parameters;
+  endif
+
+  pid = repmat(uint64(-1), 1, number_of_tasks);
+  status = repmat(int32(-1), 1, number_of_tasks);
 
   status_dir = 0;
 
@@ -90,9 +109,9 @@ function res = run_parallel(options, func, varargin)
     endif
 
     try
-      output_files = cell(1, options.number_of_processors);
+      output_files = cell(1, number_of_tasks);
 
-      for i=1:options.number_of_processors
+      for i=1:number_of_tasks
         output_files{i} = fullfile(output_dir, sprintf("result_%02d.mat", i));
       endfor
 
@@ -113,13 +132,43 @@ function res = run_parallel(options, func, varargin)
       data.job.user_args = varargin;
       data.job.output_files = output_files;
 
+      if (~options.reuse_subprocess)
+        data.options.number_of_processors = options.number_of_parameters;
+      endif
+
       save("-binary", input_data_file, "data", "oct_path");
 
       if (options.verbose)
         start_time = tic();
       endif
 
-      for i=1:options.number_of_processors
+      number_of_active_tasks = int32(0);
+
+      for i=1:number_of_tasks
+        prio = getpriority(PRIO_PROCESS, getpid());
+
+        unwind_protect
+          setpriority(PRIO_PROCESS, getpid(), prio + options.waitpid_polling_prio);
+
+          while (number_of_active_tasks >= options.number_of_processors)
+            for j=1:i-1
+              if (status(j) == -1)
+                [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
+
+                if (pid_wait > 0 && status_wait > 0)
+                  status(j) = status_wait;
+                  --number_of_active_tasks;
+                  break;
+                endif
+              endif
+
+              pause(options.waitpid_polling_period);
+            endfor
+          endwhile
+        unwind_protect_cleanup
+          setpriority(PRIO_PROCESS, getpid(), prio);
+        end_unwind_protect
+
         if (~isempty(options.gtest_output_junit_xml))
           options.octave_args_append{last_octave_arg} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
         endif
@@ -144,14 +193,15 @@ function res = run_parallel(options, func, varargin)
                "--proc-idx", ...
                sprintf("%d", i)};
         pid(i) = spawn(options.octave_exec, args, redirect_stdout{:});
+
+        if (pid(i) > 0)
+          ++number_of_active_tasks;
+        endif
       endfor
 
-      for i=1:numel(pid)
-        if (pid(i) > 0)
-          status = spawn_wait(pid(i));
-          if (options.verbose)
-            fprintf(stderr, "%d: job %d returned with status %d\n", getpid(), pid(i), status);
-          endif
+      for j=1:numel(pid)
+        if (status(j) == -1)
+          status(j) = run_parallel_spawn_wait(pid(j), options);
         endif
       endfor
 
@@ -160,7 +210,7 @@ function res = run_parallel(options, func, varargin)
       for i=1:numel(output_files)
         res_i = load(output_files{i}, "res").res;
 
-        for j=i:options.number_of_processors:options.number_of_parameters
+        for j=i:number_of_tasks:options.number_of_parameters
           res{j} = res_i{j};
         endfor
 
@@ -209,4 +259,16 @@ function res = run_parallel(options, func, varargin)
       confirm_recursive_rmdir(status);
     endif
   end_unwind_protect
+endfunction
+
+function status = run_parallel_spawn_wait(pid, options)
+  status = [];
+
+  if (pid > 0)
+    status = spawn_wait(pid);
+
+    if (options.verbose)
+      fprintf(stderr, "%d: job %d returned with status %d\n", getpid(), pid, status);
+    endif
+  endif
 endfunction

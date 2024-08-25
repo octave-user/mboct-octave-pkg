@@ -116,11 +116,22 @@ AC_CHECK_HEADERS(vector string sstream stdint.h, [], AC_MSG_ERROR([standard C++ 
 AC_CHECK_HEADERS(process.h)
 AC_CHECK_HEADERS(unistd.h)
 AC_CHECK_HEADERS(sys/types.h)
+AC_CHECK_HEADERS(sys/stat.h)
 AC_CHECK_HEADERS(sys/wait.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(sys/resource.h)
 
 AC_CHECK_FUNCS(vfork execvp _exit waitpid)
 AC_CHECK_FUNCS(spawnvp cwait)
 AC_CHECK_FUNCS(_spawnvp _cwait)
+AC_CHECK_FUNCS(setpriority getpriority,[have_setpriority=yes],[have_setpriority=no])
+AC_CHECK_DECL([PRIO_PROCESS],[],[have_setpriority=no],[[#include <sys/resource.h>]])
+AC_CHECK_DECL([PRIO_USER],[],[have_setpriority=no],[[#include <sys/resource.h>]])
+AC_CHECK_DECL([PRIO_PGRP],[],[have_setpriority=no],[[#include <sys/resource.h>]])
+
+if test "${have_setpriority}" = "yes"; then
+  AC_DEFINE(HAVE_SETPRIORITY, [1], [define if setpriority can be used])
+fi
 
 if test "${ac_cv_func_fork}" = "no" && test "${ac_cv_func_spawnvp}" = "no" && test "${ac_cv_func__spawnvp}" = "no"; then
   AC_MSG_ERROR([neither fork nor spawn can be used], 1)
