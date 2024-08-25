@@ -218,7 +218,7 @@ DEFUN_DLD(spawn_wait, args, nargout,
 
      const pid_t pid = args(0).uint64_value();
 
-     if (args.length() > 1 && !(args(1).is_scalar_type() && args(1).OV_ISINTEGER()))
+     if (args.length() > 1 && !args(1).is_scalar_type())
      {
           error("options must be an integer");
           return retval;
