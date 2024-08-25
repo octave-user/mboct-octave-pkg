@@ -66,9 +66,15 @@ function res = run_parallel(options, func, varargin)
     options.gtest_output_junit_xml = [];
   endif
 
+  if (~isfield(options, "redirect_stdout"))
+    options.redirect_stdout = [];
+  endif
+
   if (options.number_of_parameters < options.number_of_processors)
     options.number_of_processors = options.number_of_parameters;
   endif
+
+  last_octave_arg = numel(options.octave_args_append) + 1;
 
   res = cell(1, options.number_of_parameters);
 
@@ -115,7 +121,13 @@ function res = run_parallel(options, func, varargin)
 
       for i=1:options.number_of_processors
         if (~isempty(options.gtest_output_junit_xml))
-          options.octave_args_append{end + 1} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
+          options.octave_args_append{last_octave_arg} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
+        endif
+
+        if (~isempty(options.redirect_stdout))
+          redirect_stdout = {sprintf(options.redirect_stdout, i)};
+        else
+          redirect_stdout = {};
         endif
 
         args ={"--no-gui", ...
@@ -131,7 +143,7 @@ function res = run_parallel(options, func, varargin)
                input_data_file, ...
                "--proc-idx", ...
                sprintf("%d", i)};
-        pid(i) = spawn(options.octave_exec, args);
+        pid(i) = spawn(options.octave_exec, args, redirect_stdout{:});
       endfor
 
       for i=1:numel(pid)
