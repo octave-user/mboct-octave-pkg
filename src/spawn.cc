@@ -97,7 +97,7 @@ DEFUN_DLD(spawn, args, nargout,
 
           const std::string strOutputFile = args(2).string_value();
 
-          fd = open(strOutputFile.c_str(), O_CREAT | O_TRUNC | O_WRONLY);
+          fd = open(strOutputFile.c_str(), O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
           if (fd == -1)
           {
