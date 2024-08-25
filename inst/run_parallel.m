@@ -75,7 +75,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "reuse_subprocess"))
-    options.reuse_subprocess = true;
+    options.reuse_subprocess = false;
   endif
 
   if (~isfield(options, "waitpid_polling_period"))
@@ -145,29 +145,29 @@ function res = run_parallel(options, func, varargin)
       number_of_active_tasks = int32(0);
 
       for i=1:number_of_tasks
-        prio = getpriority(PRIO_PROCESS, getpid());
+        ## prio = getpriority(PRIO_PROCESS, getpid());
 
-        unwind_protect
-          setpriority(PRIO_PROCESS, getpid(), prio + options.waitpid_polling_prio);
+        ## unwind_protect
+        ##   setpriority(PRIO_PROCESS, getpid(), prio + options.waitpid_polling_prio);
 
-          while (number_of_active_tasks >= options.number_of_processors)
-            for j=1:i-1
-              if (status(j) == -1)
-                [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
+        while (number_of_active_tasks >= options.number_of_processors)
+          for j=1:i-1
+            if (status(j) == -1)
+              [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
 
-                if (pid_wait > 0 && status_wait > 0)
-                  status(j) = status_wait;
-                  --number_of_active_tasks;
-                  break;
-                endif
+              if (pid_wait > 0 && status_wait > 0)
+                status(j) = status_wait;
+                --number_of_active_tasks;
+                break;
               endif
+            endif
 
-              pause(options.waitpid_polling_period);
-            endfor
-          endwhile
-        unwind_protect_cleanup
-          setpriority(PRIO_PROCESS, getpid(), prio);
-        end_unwind_protect
+            pause(options.waitpid_polling_period);
+          endfor
+        endwhile
+        ## unwind_protect_cleanup
+        ##   setpriority(PRIO_PROCESS, getpid(), prio);
+        ## end_unwind_protect
 
         if (~isempty(options.gtest_output_junit_xml))
           options.octave_args_append{last_octave_arg} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
