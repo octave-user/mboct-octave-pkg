@@ -81,8 +81,8 @@ try
 
   addpath(input_data.oct_path);
 
-  function feval_clear_all_wrapper(func, proc_idx, input_data.data)
-    feval(func, proc_idx, input_data.data);
+  function feval_clear_all_wrapper(func, proc_idx, data)
+    feval(func, proc_idx, data);
   endfunction
 
   feval_clear_all_wrapper(func, proc_idx, input_data.data);
