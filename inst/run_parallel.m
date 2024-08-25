@@ -115,7 +115,7 @@ function res = run_parallel(options, func, varargin)
 
       for i=1:options.number_of_processors
         if (isempty(options.gtest_output))
-          gtest_output = [];
+          gtest_output = "";
         else
           gtest_output = ["--gtest_output=xml:", sprintf(options.gtest_output, i)];
         endif
