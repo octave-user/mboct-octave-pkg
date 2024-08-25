@@ -25,6 +25,10 @@ close all;
 
 input_data.data.verbose = true;
 
+function feval_clear_all_wrapper(func, proc_idx, data)
+  feval(func, proc_idx, data);
+endfunction
+
 function run_parallel_helper_main(args)
   try
     func = [];
@@ -75,10 +79,6 @@ function run_parallel_helper_main(args)
     endif
 
     addpath(input_data.oct_path);
-
-    function feval_clear_all_wrapper(func, proc_idx, data)
-      feval(func, proc_idx, data);
-    endfunction
 
     feval_clear_all_wrapper(func, proc_idx, input_data.data);
 
