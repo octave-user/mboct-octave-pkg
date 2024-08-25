@@ -62,8 +62,8 @@ function res = run_parallel(options, func, varargin)
     options.octave_args_append = {};
   endif
 
-  if (~isfield(options, "gtest_output"))
-    options.gtest_output = [];
+  if (~isfield(options, "gtest_output_junit_xml"))
+    options.gtest_output_junit_xml = [];
   endif
 
   if (options.number_of_parameters < options.number_of_processors)
@@ -114,10 +114,8 @@ function res = run_parallel(options, func, varargin)
       endif
 
       for i=1:options.number_of_processors
-        if (isempty(options.gtest_output))
-          gtest_output = "";
-        else
-          gtest_output = ["--gtest_output=xml:", sprintf(options.gtest_output, i)];
+        if (~isempty(options.gtest_output_junit_xml))
+          options.octave_args_append{end + 1} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
         endif
 
         args ={"--no-gui", ...
@@ -126,7 +124,6 @@ function res = run_parallel(options, func, varargin)
                "--no-init-file", ...
                "-q", ...
                options.octave_args_append{:}, ...
-               gtest_output, ...
                helper_script, ...
                "--function", ...
                "run_parallel_func", ...
