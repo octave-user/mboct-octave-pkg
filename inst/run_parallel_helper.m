@@ -23,7 +23,7 @@
 clear all;
 close all;
 
-input_data.data.options.verbose = false;
+verbose = false;
 
 try
   args = argv();
@@ -32,12 +32,12 @@ try
   input_file = "";
   proc_idx = int32(-1);
   i = int32(0);
-  
+
   while (++i <= length(args))
     if (length(args) < i + 1)
       error("missing argument for switch \"%s\"", args{i});
     endif
-    
+
     switch (args{i})
       case "--function"
         func = args{++i};
@@ -67,6 +67,10 @@ try
 
   input_data = load(input_file, "data", "oct_path", "pkg_names");
 
+  if (isfield(input_data, "data") && isfield(input_data.data, "verbose"))
+    verbose = input_data.data.verbose;
+  endif
+
   if (~isfield(input_data, "data"))
     error("missing record \"data\" in file \"%s\"", input_file);
   endif
@@ -74,19 +78,19 @@ try
   if (~isfield(input_data, "oct_path"))
     error("missing record \"oct_path\" in file \"%s\"", input_file);
   endif
-  
+
   addpath(input_data.oct_path);
 
   feval(func, proc_idx, input_data.data);
-  
+
   if (input_data.data.options.verbose)
     fprintf(stderr, "exiting process %d ...\n", getpid());
   endif
 catch
-  if (input_data.data.options.verbose)
+  if (verbose)
     fprintf(stderr, "exiting process %d with error:\n", getpid());
     error_report(lasterror());
   endif
-  
+
   exit(1);
 end_try_catch
