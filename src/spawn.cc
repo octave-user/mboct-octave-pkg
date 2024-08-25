@@ -304,7 +304,7 @@ DEFUN_DLD(setpriority, args, nargout,
 
      const int which = args(0).int_value();
 
-     if (!(args(1).is_scalar_type() && args(1).OV_ISINTEGER()))
+     if (!args(1).is_scalar_type())
      {
           error("who must be an integer");
           return retval;
@@ -312,7 +312,7 @@ DEFUN_DLD(setpriority, args, nargout,
 
      const int who = args(1).int_value();
 
-     if (!(args(2).is_scalar_type() && args(2).OV_ISINTEGER()))
+     if (!args(2).is_scalar_type())
      {
           error("prio must be an integer");
           return retval;
@@ -355,7 +355,7 @@ DEFUN_DLD(getpriority, args, nargout,
 
      const int which = args(0).int_value();
 
-     if (!(args(1).is_scalar_type() && args(1).OV_ISINTEGER()))
+     if (!args(1).is_scalar_type())
      {
           error("who must be an integer");
           return retval;
