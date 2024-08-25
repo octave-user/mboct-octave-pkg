@@ -145,21 +145,14 @@ function res = run_parallel(options, func, varargin)
       number_of_active_tasks = int32(0);
 
       for i=1:number_of_tasks
-        ## prio = getpriority(PRIO_PROCESS, getpid());
-
-        ## unwind_protect
-        ##   setpriority(PRIO_PROCESS, getpid(), prio + options.waitpid_polling_prio);
-
         while (number_of_active_tasks >= options.number_of_processors)
-          pause(options.waitpid_polling_period);          
-          ##printf("number_of_active_tasks = %d\n", number_of_active_tasks);
+          pause(options.waitpid_polling_period);
+
           for j=1:numel(pid)
             if (status(j) == -1 && pid(j) > 0)
               [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
-              #printf("spawn_wait(%d): status=%d, pid=%d\n", pid(j), status_wait, pid_wait);
-              if (pid_wait > 0)
 
-                #printf("process %d returned\n", pid_wait);
+              if (pid_wait > 0)
                 status(j) = WEXITSTATUS(status_wait);
                 --number_of_active_tasks;
                 break;
@@ -167,9 +160,6 @@ function res = run_parallel(options, func, varargin)
             endif
           endfor
         endwhile
-        ## unwind_protect_cleanup
-        ##   setpriority(PRIO_PROCESS, getpid(), prio);
-        ## end_unwind_protect
 
         if (~isempty(options.gtest_output_junit_xml))
           options.octave_args_append{last_octave_arg} = ["--gtest_output=xml:", sprintf(options.gtest_output_junit_xml, i)];
