@@ -23,6 +23,8 @@
 clear all;
 close all;
 
+input_data.data.options.verbose = false;
+
 try
   args = argv();
 
