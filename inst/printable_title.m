@@ -27,3 +27,5 @@ function s_out = printable_title(s_in)
   s_out(find(s_out == '_')) = ' ';
 endfunction
 
+%!error
+%! error("this test must always fail");
