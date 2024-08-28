@@ -23,8 +23,6 @@
 clear all;
 close all;
 
-input_data.data.verbose = true;
-
 function feval_clear_all_wrapper(func, proc_idx, data)
   ## Allow us to run code like this:
   ## evalin("caller", "clear all");
@@ -32,6 +30,8 @@ function feval_clear_all_wrapper(func, proc_idx, data)
 endfunction
 
 function run_parallel_helper_main(args)
+  input_data.data.options.verbose = true;
+  
   try
     func = [];
     input_file = "";
