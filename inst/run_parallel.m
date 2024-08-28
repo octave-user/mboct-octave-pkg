@@ -83,7 +83,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "user_hook_func"))
-    options.user_hook_func = @(idx, flags, varargin);
+    options.user_hook_func = @(idx, flags, varargin) [];
   endif
 
   last_octave_arg = numel(options.octave_args_append) + 1;
