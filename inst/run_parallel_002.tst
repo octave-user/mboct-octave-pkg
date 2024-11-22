@@ -1,5 +1,5 @@
 ## run_parallel.m:02
-%!demo
+%!test
 %! try
 %! Phi = linspace(-pi, pi, 1000);
 %! f = @(i, Phi) quadv(@(x) sin(x + Phi(i)).^2, 0, 2 * pi);

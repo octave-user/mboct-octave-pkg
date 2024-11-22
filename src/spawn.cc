@@ -103,7 +103,7 @@ DEFUN_DLD(spawn, args, nargout,
 
           if (fd == -1)
           {
-               error("failed to open file \"%s\"", strOutputFile.c_str());
+               error("failed to open file \"%s\": %s", strOutputFile.c_str(), strerror(errno));
                return retval;
           }
 #else
@@ -179,7 +179,7 @@ DEFUN_DLD(spawn, args, nargout,
 
      if (!status)
      {
-          error("failed to start process \"%s\"", strCommand.c_str());
+          error("failed to start process \"%s\": %s", strCommand.c_str(), strerror(errno));
           return retval;
      }
 
@@ -238,7 +238,7 @@ DEFUN_DLD(spawn_wait, args, nargout,
 
      if (res != pid && nargout < 2)
      {
-          error("failed to wait for process %Ld", static_cast<long long>(pid));
+          error("failed to wait for process %Ld: %s", static_cast<long long>(pid), strerror(errno));
      }
 
      retval.append(octave_int32(status));
