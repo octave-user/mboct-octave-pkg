@@ -31,7 +31,7 @@ endfunction
 
 function run_parallel_helper_main(args)
   input_data.data.options.verbose = true;
-  
+
   try
     func = [];
     input_file = "";
@@ -70,17 +70,26 @@ function run_parallel_helper_main(args)
       error("missing argument --proc-idx");
     endif
 
-    input_data = load(input_file, "data", "oct_path", "pkg_names");
+    input_data = load(input_file, "data", "oct_pkg");
 
     if (~isfield(input_data, "data"))
       error("missing record \"data\" in file \"%s\"", input_file);
     endif
 
-    if (~isfield(input_data, "oct_path"))
-      error("missing record \"oct_path\" in file \"%s\"", input_file);
+    if (~isfield(input_data, "oct_pkg"))
+      error("missing record \"oct_pkg\" in file \"%s\"", input_file);
     endif
 
-    addpath(input_data.oct_path);
+    pkg("local_list", input_data.oct_pkg.local_list);
+    pkg("global_list", input_data.oct_pkg.global_list);
+
+    for i=1:numel(input_data.oct_pkg.list)
+      if (input_data.oct_pkg.list{i}.loaded)
+        pkg("load", input_data.oct_pkg.list{i}.name);
+      endif
+    endfor
+
+    addpath(input_data.oct_pkg.path);
 
     feval_clear_all_wrapper(func, proc_idx, input_data.data);
 

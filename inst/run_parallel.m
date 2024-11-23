@@ -101,6 +101,11 @@ function res = run_parallel(options, func, varargin)
 
   status_dir = 0;
 
+  oct_pkg.list = pkg("list");
+  oct_pkg.local_list = pkg("local_list");
+  oct_pkg.global_list = pkg("global_list");
+  oct_pkg.path = path();
+
   unwind_protect
     status_dir = mkdir(output_dir);
 
@@ -125,8 +130,6 @@ function res = run_parallel(options, func, varargin)
 
       input_data_file = fullfile(output_dir, "input_data.mat");
 
-      oct_path = path();
-
       data.options = options;
       data.job.user_hook_func = options.user_hook_func;
       data.job.user_func = func;
@@ -137,7 +140,7 @@ function res = run_parallel(options, func, varargin)
         data.options.number_of_processors = options.number_of_parameters;
       endif
 
-      save("-binary", input_data_file, "data", "oct_path");
+      save("-binary", input_data_file, "data", "oct_pkg");
 
       if (options.verbose)
         start_time = tic();
