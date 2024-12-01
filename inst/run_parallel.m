@@ -79,7 +79,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "waitpid_polling_period"))
-    options.waitpid_polling_period = 10e-3;
+    options.waitpid_polling_period = 50e-3;
   endif
 
   if (~isfield(options, "user_hook_func"))
