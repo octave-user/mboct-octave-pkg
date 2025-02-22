@@ -403,7 +403,7 @@ DEFUN_DLD(PRIO_USER, args, nargout,
 %!test
 %! pid = spawn("ls", {"-l"});
 %! rc = spawn_wait(pid);
-%! assert(rc, 0);
+%! assert(rc, int32(0));
 
 %!test
 %! tic
@@ -416,5 +416,5 @@ DEFUN_DLD(PRIO_USER, args, nargout,
 %!demo
 %! pid = spawn("octave-config", {"-p", "VERSION"});
 %! status = spawn_wait(pid);
-%! assert(status, 0);
+%! assert(status, int32(0));
 */
