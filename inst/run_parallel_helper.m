@@ -79,14 +79,14 @@ function run_parallel_helper_main(args)
     if (~isfield(input_data, "oct_pkg"))
       error("missing record \"oct_pkg\" in file \"%s\"", input_file);
     endif
-    
+
     pkg("local_list", input_data.oct_pkg.local_list);
 
     if (~strcmp(pkg("global_list"), input_data.oct_pkg.global_list))
       ## FIXME: workaround bug #66831 in octave-9.4.0
       pkg("global_list", input_data.oct_pkg.global_list);
     endif
-    
+
     for i=1:numel(input_data.oct_pkg.list)
       if (input_data.oct_pkg.list{i}.loaded)
         pkg("load", input_data.oct_pkg.list{i}.name);
