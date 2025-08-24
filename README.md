@@ -9,7 +9,7 @@
   - Utility functions for generating and merging Adobe PDF files from Octave figures.
   - Utility functions to export Octave figures to ASCII CSV files.
   - Utility functions for tests and demos.
-  
+
 Copyright<sup>&copy;</sup> 2019-2020
 
 [Reinhard](mailto:octave-user@a1.net)
@@ -17,21 +17,20 @@ Copyright<sup>&copy;</sup> 2019-2020
 # Installation
 
 ## GNU Octave installation
-  - Follow the instructions on (http://www.gnu.org/software/octave/) to install GNU Octave.  
-  - Make sure, that `mkoctfile` is installed.  
-    `mkoctfile --version` 
+  - Follow the instructions on (http://www.gnu.org/software/octave/) to install GNU Octave.
+  - Make sure, that `mkoctfile` is installed.
+    `mkoctfile --version`
 
 ## GNU Octave package installation:
-  - Install the following packages from github.  
-    `for pkg in octave; do`    
-        `git clone https://github.com/octave-user/mboct-${pkg}-pkg.git && make -C mboct-${pkg}-pkg install_local`	  
+  - Install the following packages from github.
+    `for pkg in octave; do`
+        `git clone https://github.com/octave-user/mboct-${pkg}-pkg.git && make -C mboct-${pkg}-pkg install_local`
     `done`
 
 ## Usage
-  - Run Octave.  
+  - Run Octave.
     `octave`
-  - At the Octave prompt load the package.   
+  - At the Octave prompt load the package.
     `pkg load mboct-octave-pkg`
-  - At the Octave prompt execute the demos.  
+  - At the Octave prompt execute the demos.
     `demo run_parallel`
-	
