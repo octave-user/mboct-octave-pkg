@@ -150,7 +150,7 @@ DEFUN_DLD(spawn, args, nargout,
      pid_t pid = _spawnvp(_P_NOWAIT, &strCommand[0], &rgArgsVec.front());
      status = pid != 0;
 #else
-     pid_t pid = fork();
+     pid_t pid = vfork();
 
      if (pid > 0)
      {

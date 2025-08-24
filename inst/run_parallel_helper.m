@@ -80,7 +80,10 @@ function run_parallel_helper_main(args)
       error("missing record \"oct_pkg\" in file \"%s\"", input_file);
     endif
 
-    pkg("local_list", input_data.oct_pkg.local_list);
+    if (~strcmp(pkg("local_list"), input_data.oct_pkg.local_list))
+      ## FIXME: workaround bug #66831 in octave-10.2.0
+      pkg("local_list", input_data.oct_pkg.local_list);
+    endif
 
     if (~strcmp(pkg("global_list"), input_data.oct_pkg.global_list))
       ## FIXME: workaround bug #66831 in octave-9.4.0
