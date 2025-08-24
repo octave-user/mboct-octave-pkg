@@ -53,5 +53,8 @@ Command-line parsing
         overwrite_struct_add_arg
         
 Testing
+        assert_simple
         exec_demo
         exec_test
+        run_tests_parallel
+        run_tests_parallel_handler
