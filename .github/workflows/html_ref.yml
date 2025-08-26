@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with: 
           name: html-manual
-          path: $GITHUB_WORKSPACE/target
+          path: ${GITHUB_WORKSPACE}/target
   # Single deploy job since we're just deploying
   deploy:
     environment:
@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: $GITHUB_WORKSPACE/target
+          path: ${GITHUB_WORKSPACE}/target
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
