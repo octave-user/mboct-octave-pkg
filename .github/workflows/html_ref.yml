@@ -32,10 +32,13 @@ jobs:
           sudo apt-get install octave-dev
       - name: Install generate_html
         run: |
-          sudo octave-cli --eval "pkg install -verbose -forge -global generate_html"
+          octave-cli --eval "pkg install -verbose -forge generate_html"
+      - name: Install the package
+          make -C $GITHUB_WORKSPACE install_local
       - name: Generate html
         run: |
-          make -C $GITHUB_WORKSPACE html
+          cd $GITHUB_WORKSPACE
+          octave --eval 'pkg("load","generate_html");generate_package_html("mboct-octave-pkg","target",get_html_options("octave-forge"))'
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with: 
