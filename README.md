@@ -15,17 +15,10 @@ Copyright<sup>&copy;</sup> 2019-2020
 [Reinhard](mailto:octave-user@a1.net)
 
 # Installation
+  - See [simple.yml](https://github.com/octave-user/mboct-octave-pkg/blob/master/.github/workflows/simple.yml) as an example on how to install mboct-octave-pkg.
 
-## GNU Octave installation
-  - Follow the instructions on (http://www.gnu.org/software/octave/) to install GNU Octave.
-  - Make sure, that `mkoctfile` is installed.
-    `mkoctfile --version`
-
-## GNU Octave package installation:
-  - Install the following packages from github.
-    `for pkg in octave; do`
-        `git clone https://github.com/octave-user/mboct-${pkg}-pkg.git && make -C mboct-${pkg}-pkg install_local`
-    `done`
+# Function reference
+  - The function reference is automatically generated from the source code by means of Octave's [generate_html](https://octave.sourceforge.io/generate_html/index.html) package. See [overview.html](https://octave-user.github.io/mboct-octave-pkg/mboct-octave-pkg/overview.html).
 
 ## Usage
   - Run Octave.
