@@ -86,8 +86,9 @@ DEFUN_DLD(spawn, args, nargout,
           }
      }
 
+#if defined(HAVE_VFORK)
      int fd = -1;
-
+#endif
      if (args.length() >= 3)
      {
 #if defined(HAVE_VFORK)
@@ -171,11 +172,12 @@ DEFUN_DLD(spawn, args, nargout,
      {
           status = false;
      }
-#endif
+
      if (fd != -1)
      {
           close(fd);
      }
+#endif
 
      if (!status)
      {
