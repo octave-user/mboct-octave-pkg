@@ -41,155 +41,158 @@ DEFUN_DLD(shell, args, nargout,
           "@end deftypefn\n")
 {
 #if defined(HAVE_WIN32)
-        octave_value_list retval;
-        std::string command, type;
-        bool return_output = false;
-        bool async = false;
+     octave_value_list retval;
+     std::string command, type;
+     bool return_output = false;
+     bool async = false;
 
-        if (args.length() < 1 || args.length() > 3 || nargout > 2) {
-                print_usage();
-                return retval;
-        }
-        
-        if (args.length() > 0) {
-                command = args(0).string_value();
-                
-                if (error_state) {
-                        return retval;
-                }
-        }
+     if (args.length() < 1 || args.length() > 3 || nargout > 2) {
+          print_usage();
+          return retval;
+     }
 
-        if (args.length() > 1) {
-                return_output = args(1).bool_value();
+     if (args.length() > 0) {
+          command = args(0).string_value();
+#if OCTAVE_MAJOR_VERSION < 6
+          if (error_state) {
+               return retval;
+          }
+#endif
+     }
 
-                if (error_state) {
-                        return retval;
-                }
-        }
+     if (args.length() > 1) {
+          return_output = args(1).bool_value();
+#if OCTAVE_MAJOR_VERSION < 6
+          if (error_state) {
+               return retval;
+          }
+#endif
+     }
 
-        if (args.length() > 2) {
-                type = args(2).string_value();
+     if (args.length() > 2) {
+          type = args(2).string_value();
+#if OCTAVE_MAJOR_VERSION < 6
+          if (error_state) {
+               return retval;
+          }
+#endif
+     } else {
+          type = "sync";
+     }
 
-                if (error_state) {
-                        return retval;
-                }
-        } else {
-                type = "sync";
-        }
+     if (nargout >= 2) {
+          return_output = true;
+     }
 
-        if (nargout >= 2) {
-                return_output = true;
-        }
-    
-        if (type == "async") {
-                async = true;
-        } else if (type != "sync") {
-                error("invalid argument: type = \"%s\"", type.c_str());
-                return retval;
-        }
+     if (type == "async") {
+          async = true;
+     } else if (type != "sync") {
+          error("invalid argument: type = \"%s\"", type.c_str());
+          return retval;
+     }
 
-        if (async && return_output) {
-                error("invalid arguments: return_output = true && type = \"async\"");
-                return retval;
-        }
+     if (async && return_output) {
+          error("invalid arguments: return_output = true && type = \"async\"");
+          return retval;
+     }
 
-	{
-		std::ostringstream cmdos;
-        
-		cmdos << "sh -c \"";
+     {
+          std::ostringstream cmdos;
 
-		for (char c:command) {
-			switch (c) {
-			case '"':
-			  cmdos << '\\';
-			}
-			cmdos << c;
-		}
-	
-		cmdos << "\"\0";
+          cmdos << "sh -c \"";
 
-		command = cmdos.str();
-	}
-	
-        SECURITY_ATTRIBUTES oProcAttr = {sizeof(SECURITY_ATTRIBUTES)};
-        SECURITY_ATTRIBUTES oThreadAttr = {sizeof(SECURITY_ATTRIBUTES)};
-        STARTUPINFO oStartupInfo = {sizeof(STARTUPINFO)};
-        PROCESS_INFORMATION oProcessInfo = {0};
+          for (char c:command) {
+               switch (c) {
+               case '"':
+                    cmdos << '\\';
+               }
+               cmdos << c;
+          }
 
-        HANDLE hInput = INVALID_HANDLE_VALUE;
-    
-        if (return_output) {
-                SECURITY_ATTRIBUTES oPipeAttr = {sizeof(SECURITY_ATTRIBUTES)};
-                oPipeAttr.bInheritHandle = TRUE;
-                oStartupInfo.dwFlags = STARTF_USESTDHANDLES;
-        
-                if (!CreatePipe(&hInput, &oStartupInfo.hStdOutput, &oPipeAttr, 0)) {
-                        error("failed to create pipe for process \"%s\"", command.c_str());
-                        return retval;
-                }
+          cmdos << "\"\0";
 
-                SetHandleInformation(hInput, HANDLE_FLAG_INHERIT, 0);
-                oStartupInfo.hStdInput = INVALID_HANDLE_VALUE;
-                oStartupInfo.hStdError = oStartupInfo.hStdOutput;
-        }
-    
-        BOOL bStatus = CreateProcess(NULL, &command.front(), &oProcAttr, &oThreadAttr, TRUE, 0, NULL, NULL, &oStartupInfo, &oProcessInfo);
+          command = cmdos.str();
+     }
 
-        if (return_output) {
-                CloseHandle(oStartupInfo.hStdOutput);
-        }
-    
-        if (!bStatus) {
-                error("failed to start process \"%s\"", command.c_str());
-        } else {
-                if (async) {
-                        retval.append(static_cast<double>(oProcessInfo.dwProcessId));
-                } else {
-                        std::ostringstream output;
-            
-                        if (return_output) {
-                                std::vector<char> rgBuffer(1024);
-                                DWORD dwBytes;
-                
-                                while (true) {
-                                        bStatus = ReadFile(hInput, &rgBuffer[0], rgBuffer.size(), &dwBytes, NULL);
+     SECURITY_ATTRIBUTES oProcAttr = {sizeof(SECURITY_ATTRIBUTES)};
+     SECURITY_ATTRIBUTES oThreadAttr = {sizeof(SECURITY_ATTRIBUTES)};
+     STARTUPINFO oStartupInfo = {sizeof(STARTUPINFO)};
+     PROCESS_INFORMATION oProcessInfo = {0};
 
-                                        if (!bStatus || !dwBytes) {
-                                                break;
-                                        }
+     HANDLE hInput = INVALID_HANDLE_VALUE;
 
-                                        output.write(&rgBuffer[0], dwBytes);
-                                }
-                        }
+     if (return_output) {
+          SECURITY_ATTRIBUTES oPipeAttr = {sizeof(SECURITY_ATTRIBUTES)};
+          oPipeAttr.bInheritHandle = TRUE;
+          oStartupInfo.dwFlags = STARTF_USESTDHANDLES;
 
-                        if (WAIT_OBJECT_0 != WaitForSingleObject(oProcessInfo.hProcess, INFINITE)) {
-                                error("failed to wait for process \"%s\"", command.c_str());
-                        } else {            
-                                DWORD dwExitCode = -1;
+          if (!CreatePipe(&hInput, &oStartupInfo.hStdOutput, &oPipeAttr, 0)) {
+               error("failed to create pipe for process \"%s\"", command.c_str());
+               return retval;
+          }
 
-                                if (!GetExitCodeProcess(oProcessInfo.hProcess, &dwExitCode)) {
-                                        error("failed to get exit code of process \"%s\"", command.c_str());
-                                } else {
-					retval.append(static_cast<double>(dwExitCode));
-                
-                                        if (return_output) {
-                                                retval.append(output.str());
-                                        }
-                                }            
-                        }
-                }
-        
-                CloseHandle(oProcessInfo.hProcess);
-                CloseHandle(oProcessInfo.hThread);
-        }
-    
-        if (return_output) {
-                CloseHandle(hInput);
-        }
+          SetHandleInformation(hInput, HANDLE_FLAG_INHERIT, 0);
+          oStartupInfo.hStdInput = INVALID_HANDLE_VALUE;
+          oStartupInfo.hStdError = oStartupInfo.hStdOutput;
+     }
 
-        return retval;
+     BOOL bStatus = CreateProcess(NULL, &command.front(), &oProcAttr, &oThreadAttr, TRUE, 0, NULL, NULL, &oStartupInfo, &oProcessInfo);
+
+     if (return_output) {
+          CloseHandle(oStartupInfo.hStdOutput);
+     }
+
+     if (!bStatus) {
+          error("failed to start process \"%s\"", command.c_str());
+     } else {
+          if (async) {
+               retval.append(static_cast<double>(oProcessInfo.dwProcessId));
+          } else {
+               std::ostringstream output;
+
+               if (return_output) {
+                    std::vector<char> rgBuffer(1024);
+                    DWORD dwBytes;
+
+                    while (true) {
+                         bStatus = ReadFile(hInput, &rgBuffer[0], rgBuffer.size(), &dwBytes, NULL);
+
+                         if (!bStatus || !dwBytes) {
+                              break;
+                         }
+
+                         output.write(&rgBuffer[0], dwBytes);
+                    }
+               }
+
+               if (WAIT_OBJECT_0 != WaitForSingleObject(oProcessInfo.hProcess, INFINITE)) {
+                    error("failed to wait for process \"%s\"", command.c_str());
+               } else {
+                    DWORD dwExitCode = -1;
+
+                    if (!GetExitCodeProcess(oProcessInfo.hProcess, &dwExitCode)) {
+                         error("failed to get exit code of process \"%s\"", command.c_str());
+                    } else {
+                         retval.append(static_cast<double>(dwExitCode));
+
+                         if (return_output) {
+                              retval.append(output.str());
+                         }
+                    }
+               }
+          }
+
+          CloseHandle(oProcessInfo.hProcess);
+          CloseHandle(oProcessInfo.hThread);
+     }
+
+     if (return_output) {
+          CloseHandle(hInput);
+     }
+
+     return retval;
 #else
-        return OCTAVE__FEVAL("system", args, nargout);
+     return OCTAVE__FEVAL("system", args, nargout);
 #endif
 }
 
