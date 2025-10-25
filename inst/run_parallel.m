@@ -70,6 +70,10 @@ function res = run_parallel(options, func, varargin)
     options.redirect_stdout = [];
   endif
 
+  if (ispc())
+    options.redirect_stdout(options.redirect_stdout == "\\") = "/";
+  endif
+
   if (options.number_of_parameters < options.number_of_processors)
     options.number_of_processors = options.number_of_parameters;
   endif
