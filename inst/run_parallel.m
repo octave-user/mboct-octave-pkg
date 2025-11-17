@@ -1,4 +1,4 @@
-## Copyright (C) 2016(-2020) Reinhard <octave-user@a1.net>
+## Copyright (C) 2016(-2025) Reinhard <octave-user@a1.net>
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ function res = run_parallel(options, func, varargin)
   endif
 
   if (~isfield(options, "user_hook_func"))
-    options.user_hook_func = @(idx, flags, varargin) [];
+    options.user_hook_func = @(idx, flags, varargin) {};
   endif
 
   last_octave_arg = numel(options.octave_args_append) + 1;
@@ -179,12 +179,15 @@ function res = run_parallel(options, func, varargin)
           redirect_stdout = {};
         endif
 
+        user_hook_args = feval(data.job.user_hook_func, i, "pre:spawn", data.job.user_args{:});
+
         args = {"--no-gui", ...
                 "--no-history", ...
                 "--norc", ...
                 "--no-init-file", ...
                 "-q", ...
                 options.octave_args_append{:}, ...
+                user_hook_args{:}, ...
                 helper_script, ...
                 "--function", ...
                 "run_parallel_func", ...
@@ -192,8 +195,6 @@ function res = run_parallel(options, func, varargin)
                 input_data_file, ...
                 "--proc-idx", ...
                 sprintf("%d", i)};
-
-        feval(data.job.user_hook_func, i, "pre:spawn", data.job.user_args{:});
 
         pid(i) = spawn(options.octave_exec, args, redirect_stdout{:});
 
