@@ -20,6 +20,14 @@
 ## @end deftypefn
 
 function status = run_tests_parallel(number_of_processors, package_names)
+  if (nargin < 2 || nargout > 1)
+    print_usage();
+  endif
+
+  if (~isscalar(number_of_processors) || ~iscell(package_names))
+    print_usage();
+  endif
+
   pkg_files = {};
 
   for i=1:numel(package_names)
