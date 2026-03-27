@@ -21,5 +21,7 @@
 
 function status = run_tests_parallel_handler(idx, pkg_files)
   printf("%d:%s\n", idx, pkg_files{idx});
+  start = tic();
   [status.N, status.NMAX] = test(pkg_files{idx});
+  status.elapsed_time = toc(start);
 endfunction
