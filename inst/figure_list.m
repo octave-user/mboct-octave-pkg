@@ -29,7 +29,7 @@ function figure_list()
   fprintf(stderr, "list of figures:\n");
   
   for i=1:length(figures)
-    fprintf(stderr, "\t%d: %s\n", i, get(get(get(figures(i),"currentaxes"),"title"),"string"));
+    fprintf(stderr, "\t%d: %s\n", figures(i), get(get(get(figures(i),"currentaxes"),"title"),"string"));
   endfor
   
   fprintf(stderr, "\ttype figure_show(1) to figure_show figure 1 ...\n");
