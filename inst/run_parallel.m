@@ -160,8 +160,8 @@ function res = run_parallel(options, func, varargin)
             if (status(j) == -1 && pid(j) > 0)
               [status_wait, pid_wait] = spawn_wait(pid(j), WNOHANG);
 
-              if (pid_wait > 0)
-                status(j) = WEXITSTATUS(status_wait);
+              if (pid_wait == pid(j))
+                status(j) = status_wait;
                 --number_of_active_tasks;
                 break;
               endif
@@ -205,12 +205,27 @@ function res = run_parallel(options, func, varargin)
 
       for j=1:numel(pid)
         if (status(j) == -1)
-          status(j) = run_parallel_spawn_wait(pid(j), options);
+          [status_wait, pid_wait] = spawn_wait(pid(j));
+          if (pid_wait == pid(j))
+            status(j) = status_wait;
+          endif
         endif
       endfor
 
       for j=1:numel(pid)
         feval(data.job.user_hook_func, j, "post:spawn", data.job.user_args{:}, pid(j), status(j));
+      endfor
+
+      for j=1:numel(status)
+        if (WIFEXITED(status(j)))
+          if (WEXITSTATUS(status(j)) ~= 0)
+            warning("job %d failed with status %d", pid(j), WEXITSTATUS(status(j)));
+          endif
+        elseif (WIFSIGNALED(status(j)))
+          error("job %d killed by signal %d", pid(j), WTERMSIG(status(j)));
+        else
+          error("job %d failed for an unknown reason (waitpid returned %d)", pid(j), status(j));
+        endif
       endfor
 
       res = cell(1, options.number_of_parameters);
@@ -238,19 +253,21 @@ function res = run_parallel(options, func, varargin)
       current_exception = lasterror();
 
       for i=1:numel(pid)
-        if (pid(i) > 0)
-          if (0 ~= kill(pid(i), SIG.TERM))
-            warning("failed to terminate process %d", pid(i));
-          endif
+        if (pid(i) > 0 && status(i) == -1)
+          if (0 == kill(pid(i), SIG.TERM))
+            [status_wait, pid_wait] = spawn_wait(pid(i));
 
-          status = spawn_wait(pid(i));
-
-          if (options.verbose)
-            if (status == 0)
-              fprintf(stderr, "%d: job %d completed with status %d\n", getpid(), pid(i), status);
-            else
-              fprintf(stderr, "%d: job %d failed with status %d\n", getpid(), pid(i), status);
+            if (options.verbose)
+              if (WIFEXITED(status_wait))
+                fprintf(stderr, "%d: job %d completed with status %d\n", getpid(), pid(i), WEXITSTATUS(status));
+              elseif (WIFSIGNALED(status_wait))
+                fprintf(stderr, "%d: job %d killed by signal %d\n", getpid(), pid(i), WTERMSIG(status));
+              else
+                fprintf(stderr, "%d: job %d failed with status %d\n", getpid(), pid(i), status);
+              endif
             endif
+          else
+            warning("failed to terminate process %d", pid(i));
           endif
         endif
       endfor
@@ -267,16 +284,4 @@ function res = run_parallel(options, func, varargin)
       confirm_recursive_rmdir(status);
     endif
   end_unwind_protect
-endfunction
-
-function status = run_parallel_spawn_wait(pid, options)
-  status = [];
-
-  if (pid > 0)
-    status = spawn_wait(pid);
-
-    if (options.verbose)
-      fprintf(stderr, "%d: job %d returned with status %d\n", getpid(), pid, status);
-    endif
-  endif
 endfunction
